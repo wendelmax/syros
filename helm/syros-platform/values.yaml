@@ -1,0 +1,197 @@
+# Default values for syros-platform
+# This is a YAML-formatted file.
+
+replicaCount: 3
+
+image:
+  repository: syros-platform
+  pullPolicy: IfNotPresent
+  tag: "1.0.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+  grpcPort: 9090
+  websocketPort: 8081
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: syros-platform.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Syros Platform specific configuration
+config:
+  server:
+    host: "0.0.0.0"
+    port: 8080
+    grpcPort: 9090
+    websocketPort: 8081
+  
+  storage:
+    redis:
+      url: "redis://redis:6379"
+      poolSize: 10
+      timeoutSeconds: 30
+    database:
+      url: "postgresql://postgres:password@postgres:5432/syros"
+      poolSize: 10
+      timeoutSeconds: 30
+  
+  security:
+    jwtSecret: "your-secret-key-change-in-production"
+    apiKeyEncryptionKey: "your-api-key-change-in-production"
+    corsOrigins: ["*"]
+  
+  logging:
+    level: "info"
+    format: "json"
+    output: "stdout"
+  
+  serviceDiscovery:
+    enabled: true
+    consulUrl: "http://consul:8500"
+    serviceName: "syros-platform"
+    serviceId: "syros-platform-{{ .Release.Revision }}"
+    healthCheckInterval: 10
+    tags: ["syros", "platform", "coordination"]
+
+# Dependencies
+dependencies:
+  - name: redis
+    version: 17.3.7
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+  
+  - name: postgresql
+    version: 12.1.2
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  
+  - name: consul
+    version: 0.50.0
+    repository: https://helm.releases.hashicorp.com
+    condition: consul.enabled
+
+# Enable/disable dependencies
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+  replica:
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 8Gi
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "password"
+    database: "syros"
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+consul:
+  enabled: true
+  global:
+    datacenter: "syros-dc"
+  server:
+    replicas: 3
+    resources:
+      requests:
+        memory: "100Mi"
+        cpu: "100m"
+      limits:
+        memory: "100Mi"
+        cpu: "100m"
+  client:
+    enabled: true
+    resources:
+      requests:
+        memory: "50Mi"
+        cpu: "50m"
+      limits:
+        memory: "50Mi"
+        cpu: "50m"
+
+# Monitoring
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+
+# Network policies
+networkPolicy:
+  enabled: false
+  ingress: []
+  egress: []
+
+# Pod disruption budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Horizontal Pod Autoscaler
+hpa:
+  enabled: false
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80

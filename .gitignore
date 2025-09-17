@@ -1,0 +1,44 @@
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Docker
+.dockerignore
+
+# Temporary files
+tmp/
+temp/
+
+# Coverage
+coverage/
+*.profraw
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Config files with secrets
+config/production.toml
+config/secrets.toml

@@ -1,0 +1,47 @@
+[server]
+port = 8080
+grpc_port = 9090
+websocket_port = 8081
+host = "0.0.0.0"
+
+[storage.redis]
+url = "redis://127.0.0.1:6379"
+pool_size = 10
+timeout_seconds = 5
+
+[storage.etcd]
+url = "http://127.0.0.1:2379"
+timeout_seconds = 5
+
+[storage.postgres]
+url = "postgresql://postgres:password@127.0.0.1:5432/syros"
+pool_size = 10
+timeout_seconds = 5
+
+[security]
+jwt_secret = "dev-secret-key-change-in-production"
+api_key_encryption_key = "dev-encryption-key-change-in-production"
+cors_origins = ["http://localhost:3000", "http://localhost:8080"]
+
+[logging]
+level = "info"
+format = "json"
+output = "stdout"
+
+[metrics]
+enabled = true
+port = 9090
+path = "/metrics"
+
+[rate_limiting]
+enabled = true
+requests_per_minute = 1000
+burst_size = 100
+
+[service_discovery]
+enabled = true
+consul_url = "http://localhost:8500"
+service_name = "syros-platform"
+service_id = "syros-platform-1"
+health_check_interval = 10
+tags = ["syros", "platform", "coordination"]

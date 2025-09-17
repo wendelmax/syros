@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Syros Platform GraphQL Playground</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/static/css/index.css" />
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/favicon.png" />
+    <script src="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/static/js/middleware.js"></script>
+</head>
+<body>
+    <div id="root">
+        <style>
+            body {
+                background-color: rgb(23, 42, 58);
+                font-family: Open Sans, sans-serif;
+                height: 90vh;
+                margin: 0;
+                width: 100%;
+                overflow: hidden;
+            }
+            #root {
+                height: 100vh;
+                width: 100vw;
+            }
+            .loading {
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                font-size: 14px;
+                font-family: 'Open Sans', sans-serif;
+            }
+        </style>
+        <div class="loading">Loading GraphQL Playground...</div>
+    </div>
+    <script>
+        window.addEventListener('load', function (event) {
+            const root = document.getElementById('root');
+            root.classList.remove('loading');
+            GraphQLPlayground.init(root, {
+                endpoint: '/graphql',
+                settings: {
+                    'request.credentials': 'include',
+                },
+                tabs: [
+                    {
+                        endpoint: '/graphql',
+                        query: `# Welcome to Syros Platform GraphQL API
+# 
+# This playground allows you to explore and test the GraphQL API
+# for the Syros Platform - Distributed Coordination Service.
+#
+# Try some example queries below:
+
+# Get system health
+query Health {
+  health
+  version
+}
+
+# Get all users
+query Users {
+  users {
+    id
+    username
+    email
+    roles
+    isActive
+    createdAt
+  }
+}
+
+# Get all roles
+query Roles {
+  roles {
+    name
+    description
+    permissions
+    isSystem
+  }
+}
+
+# Check a permission
+query CheckPermission {
+  checkPermission(userId: "user-123", permission: "LockCreate") {
+    hasPermission
+    userId
+    permission
+  }
+}
+
+# Acquire a lock
+mutation AcquireLock {
+  acquireLock(input: { key: "test-lock", ttl: 60 }) {
+    success
+    message
+    lock {
+      key
+      owner
+      status
+      acquiredAt
+    }
+  }
+}
+
+# Start a saga
+mutation StartSaga {
+  startSaga(input: {
+    name: "test-saga"
+    steps: [
+      { name: "step1", compensation: "compensate-step1" }
+      { name: "step2", compensation: "compensate-step2" }
+    ]
+  }) {
+    success
+    message
+    saga {
+      id
+      name
+      status
+      steps {
+        id
+        name
+        status
+      }
+    }
+  }
+}
+
+# Append an event
+mutation AppendEvent {
+  appendEvent(input: {
+    streamId: "test-stream"
+    eventType: "UserCreated"
+    data: "{\\"userId\\": \\"123\\", \\"name\\": \\"John Doe\\"}"
+    metadata: "{\\"source\\": \\"api\\"}"
+  }) {
+    success
+    message
+    event {
+      id
+      streamId
+      eventType
+      data
+      version
+      createdAt
+    }
+  }
+}
+
+# Set cache entry
+mutation SetCache {
+  setCache(input: {
+    key: "test-key"
+    value: "test-value"
+    ttl: 3600
+  }) {
+    success
+    message
+    entry {
+      key
+      value
+      ttl
+      createdAt
+    }
+  }
+}
+
+# Create a user
+mutation CreateUser {
+  createUser(input: {
+    username: "testuser"
+    email: "test@example.com"
+    roles: ["Developer"]
+  }) {
+    success
+    message
+    user {
+      id
+      username
+      email
+      roles
+      isActive
+    }
+  }
+}`,
+                    },
+                ],
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+before:
+  hooks:
+    - go mod tidy
+    - go mod verify
+
+builds:
+  - id: syros-sdk-go
+    binary: syros-sdk-go
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    goarm:
+      - 6
+      - 7
+    main: .
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+
+archives:
+  - id: syros-sdk-go
+    name_template: "syros-sdk-go_{{ .Os }}_{{ .Arch }}"
+    format: tar.gz
+    files:
+      - README.md
+      - LICENSE
+      - examples/
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+dockers:
+  - image_templates:
+      - "syros/syros-sdk-go:{{ .Version }}"
+      - "syros/syros-sdk-go:latest"
+    dockerfile: Dockerfile
+    goos: linux
+    goarch: amd64
+
+release:
+  github:
+    owner: syros
+    name: platform
+  draft: false
+  prerelease: false
+  name_template: "Syros SDK Go v{{ .Version }}"
+  header: |
+    ## Syros SDK Go v{{ .Version }}
+    
+    Distributed Coordination Service SDK for Go.
+    
+    ### What's Changed
+  footer: |
+    ### Installation
+    
+    ```bash
+    go get github.com/syros/syros-sdk-go@v{{ .Version }}
+    ```
+    
+    ### Documentation
+    
+    - [API Reference](https://docs.syros.com/go)
+    - [Examples](https://github.com/syros/platform/tree/main/sdks/go/examples)
+    - [Website](https://syros.com)
+
+  extra_files:
+    - glob: "*.md"
+    - glob: "examples/**"
+    - glob: "LICENSE"

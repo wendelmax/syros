@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "syros-platform.fullname" . }}-config
+  labels:
+    {{- include "syros-platform.labels" . | nindent 4 }}
+data:
+  config.toml: |
+    [server]
+    host = "{{ .Values.config.server.host }}"
+    port = {{ .Values.config.server.port }}
+    grpc_port = {{ .Values.config.server.grpcPort }}
+    websocket_port = {{ .Values.config.server.websocketPort }}
+
+    [storage.redis]
+    url = "{{ .Values.config.storage.redis.url }}"
+    pool_size = {{ .Values.config.storage.redis.poolSize }}
+    timeout_seconds = {{ .Values.config.storage.redis.timeoutSeconds }}
+
+    [storage.database]
+    url = "{{ .Values.config.database.url }}"
+    pool_size = {{ .Values.config.database.poolSize }}
+    timeout_seconds = {{ .Values.config.database.timeoutSeconds }}
+
+    [security]
+    jwt_secret = "{{ .Values.config.security.jwtSecret }}"
+    api_key_encryption_key = "{{ .Values.config.security.apiKeyEncryptionKey }}"
+    cors_origins = {{ .Values.config.security.corsOrigins | toJson }}
+
+    [logging]
+    level = "{{ .Values.config.logging.level }}"
+    format = "{{ .Values.config.logging.format }}"
+    output = "{{ .Values.config.logging.output }}"
+
+    [service_discovery]
+    enabled = {{ .Values.config.serviceDiscovery.enabled }}
+    consul_url = "{{ .Values.config.serviceDiscovery.consulUrl }}"
+    service_name = "{{ .Values.config.serviceDiscovery.serviceName }}"
+    service_id = "{{ .Values.config.serviceDiscovery.serviceId }}"
+    health_check_interval = {{ .Values.config.serviceDiscovery.healthCheckInterval }}
+    tags = {{ .Values.config.serviceDiscovery.tags | toJson }}

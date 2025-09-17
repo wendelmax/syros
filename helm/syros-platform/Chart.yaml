@@ -1,0 +1,21 @@
+apiVersion: v2
+name: syros-platform
+description: Syros Platform - Distributed Coordination Service
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+home: https://syros.com
+sources:
+  - https://github.com/syros/platform
+maintainers:
+  - name: Syros Team
+    email: team@syros.com
+keywords:
+  - distributed-systems
+  - coordination
+  - locks
+  - sagas
+  - events
+  - microservices
+annotations:
+  category: Infrastructure

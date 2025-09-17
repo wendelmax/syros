@@ -1,0 +1,279 @@
+syntax = "proto3";
+
+package syros.v1;
+
+// Serviço principal do Syros Platform
+service SyrosService {
+  // Operações de Lock
+  rpc AcquireLock(LockRequest) returns (LockResponse);
+  rpc ReleaseLock(ReleaseLockRequest) returns (ReleaseLockResponse);
+  rpc ExtendLock(ExtendLockRequest) returns (ExtendLockResponse);
+  rpc ListLocks(ListLocksRequest) returns (ListLocksResponse);
+
+  // Operações de Saga
+  rpc StartSaga(SagaRequest) returns (SagaResponse);
+  rpc GetSagaStatus(GetSagaStatusRequest) returns (GetSagaStatusResponse);
+  rpc CancelSaga(CancelSagaRequest) returns (CancelSagaResponse);
+  rpc ListSagas(ListSagasRequest) returns (ListSagasResponse);
+
+  // Operações de Event Store
+  rpc AppendEvent(EventRequest) returns (EventResponse);
+  rpc GetEvents(GetEventsRequest) returns (GetEventsResponse);
+  rpc GetStreamInfo(GetStreamInfoRequest) returns (GetStreamInfoResponse);
+
+  // Operações de Cache
+  rpc GetCache(GetCacheRequest) returns (GetCacheResponse);
+  rpc SetCache(SetCacheRequest) returns (SetCacheResponse);
+  rpc DeleteCache(DeleteCacheRequest) returns (DeleteCacheResponse);
+  rpc ListCache(ListCacheRequest) returns (ListCacheResponse);
+}
+
+// Estruturas para Lock
+message LockRequest {
+  string key = 1;
+  string owner = 2;
+  uint64 ttl_seconds = 3;
+  optional string metadata = 4;
+  optional uint64 wait_timeout_seconds = 5;
+}
+
+message LockResponse {
+  string lock_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ReleaseLockRequest {
+  string key = 1;
+  string lock_id = 2;
+  string owner = 3;
+}
+
+message ReleaseLockResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ExtendLockRequest {
+  string key = 1;
+  string lock_id = 2;
+  string owner = 3;
+  uint64 ttl_seconds = 4;
+}
+
+message ExtendLockResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListLocksRequest {
+  optional string owner = 1;
+  optional string pattern = 2;
+}
+
+message ListLocksResponse {
+  repeated LockInfo locks = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message LockInfo {
+  string key = 1;
+  string lock_id = 2;
+  string owner = 3;
+  uint64 expires_at = 4;
+  optional string metadata = 5;
+}
+
+// Estruturas para Saga
+message SagaRequest {
+  string name = 1;
+  repeated SagaStep steps = 2;
+  map<string, string> metadata = 3;
+}
+
+message SagaStep {
+  string name = 1;
+  string service = 2;
+  string action = 3;
+  string compensation = 4;
+  optional uint64 timeout_seconds = 5;
+  optional RetryPolicy retry_policy = 6;
+  optional string payload = 7;
+}
+
+message RetryPolicy {
+  uint32 max_retries = 1;
+  string backoff_strategy = 2;
+  optional uint64 initial_delay_seconds = 3;
+  optional uint64 max_delay_seconds = 4;
+  optional double factor = 5;
+}
+
+message SagaResponse {
+  string saga_id = 1;
+  string status = 2;
+  string message = 3;
+}
+
+message GetSagaStatusRequest {
+  string saga_id = 1;
+}
+
+message GetSagaStatusResponse {
+  string saga_id = 1;
+  string status = 2;
+  uint32 current_step = 3;
+  repeated StepResult step_results = 4;
+  bool success = 5;
+  string message = 6;
+}
+
+message StepResult {
+  string step_name = 1;
+  string status = 2;
+  optional string error = 3;
+  uint64 started_at = 4;
+  optional uint64 completed_at = 5;
+}
+
+message CancelSagaRequest {
+  string saga_id = 1;
+  string reason = 2;
+}
+
+message CancelSagaResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListSagasRequest {
+  optional string status = 1;
+  optional string owner = 2;
+  optional uint32 limit = 3;
+}
+
+message ListSagasResponse {
+  repeated SagaInfo sagas = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message SagaInfo {
+  string saga_id = 1;
+  string name = 2;
+  string status = 3;
+  uint32 current_step = 4;
+  uint64 created_at = 5;
+  optional uint64 completed_at = 6;
+}
+
+// Estruturas para Event Store
+message EventRequest {
+  string stream_id = 1;
+  string event_type = 2;
+  string data = 3;
+  map<string, string> metadata = 4;
+}
+
+message EventResponse {
+  string event_id = 1;
+  uint64 version = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message GetEventsRequest {
+  string stream_id = 1;
+  optional uint64 from_version = 2;
+  optional uint64 to_version = 3;
+  optional uint32 limit = 4;
+}
+
+message GetEventsResponse {
+  repeated Event events = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message Event {
+  string event_id = 1;
+  string stream_id = 2;
+  string event_type = 3;
+  string data = 4;
+  uint64 version = 5;
+  uint64 timestamp = 6;
+  map<string, string> metadata = 7;
+}
+
+message GetStreamInfoRequest {
+  string stream_id = 1;
+}
+
+message GetStreamInfoResponse {
+  string stream_id = 1;
+  uint64 version = 2;
+  uint64 event_count = 3;
+  uint64 created_at = 4;
+  uint64 last_updated = 5;
+  bool success = 6;
+  string message = 7;
+}
+
+// Estruturas para Cache
+message GetCacheRequest {
+  string key = 1;
+}
+
+message GetCacheResponse {
+  string key = 1;
+  string value = 2;
+  optional string expires_at = 3;
+  repeated string tags = 4;
+  bool success = 5;
+  string message = 6;
+}
+
+message SetCacheRequest {
+  string key = 1;
+  string value = 2;
+  optional uint64 ttl_seconds = 3;
+  repeated string tags = 4;
+}
+
+message SetCacheResponse {
+  string key = 1;
+  string value = 2;
+  optional string expires_at = 3;
+  repeated string tags = 4;
+  bool success = 5;
+  string message = 6;
+}
+
+message DeleteCacheRequest {
+  string key = 1;
+}
+
+message DeleteCacheResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListCacheRequest {
+  optional string pattern = 1;
+  repeated string tags = 2;
+  optional uint32 limit = 3;
+}
+
+message ListCacheResponse {
+  repeated CacheItem items = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CacheItem {
+  string key = 1;
+  string value = 2;
+  optional string expires_at = 3;
+  repeated string tags = 4;
+}

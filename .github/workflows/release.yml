@@ -1,0 +1,219 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+        body: |
+          ## Changes
+          
+          - See CHANGELOG.md for detailed changes
+          
+          ## Installation
+          
+          ### Docker
+          ```bash
+          docker pull ghcr.io/seu-usuario/syros-platform:${{ github.ref_name }}
+          ```
+          
+          ### Binary
+          Download the appropriate binary for your platform from the assets below.
+          
+          ### Helm Chart
+          ```bash
+          helm repo add syros https://seu-usuario.github.io/syros-platform
+          helm install syros-platform syros/syros-platform --version ${{ github.ref_name }}
+          ```
+
+  build-binaries:
+    name: Build Binaries
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            name: syros-platform-linux-x86_64
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            name: syros-platform-linux-aarch64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            name: syros-platform-windows-x86_64.exe
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            name: syros-platform-macos-x86_64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            name: syros-platform-macos-aarch64
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: ${{ matrix.target }}
+
+    - name: Install system dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pkg-config libssl-dev libpq-dev
+        
+        # Install cross compilation tools for aarch64
+        if [ "${{ matrix.target }}" = "aarch64-unknown-linux-gnu" ]; then
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+          export CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc
+          export CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++
+        fi
+
+    - name: Install system dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install postgresql openssl
+
+    - name: Build binary
+      run: |
+        cargo build --release --target ${{ matrix.target }}
+        
+    - name: Prepare binary
+      shell: bash
+      run: |
+        if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          cp target/${{ matrix.target }}/release/syros-platform.exe ${{ matrix.name }}
+        else
+          cp target/${{ matrix.target }}/release/syros-platform ${{ matrix.name }}
+        fi
+
+    - name: Upload Release Asset
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: ./${{ matrix.name }}
+        tag_name: ${{ github.ref }}
+
+  build-docker:
+    name: Build and Push Docker Images
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ghcr.io/${{ github.repository_owner }}/syros-platform
+        tags: |
+          type=ref,event=tag
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  build-helm-chart:
+    name: Build and Publish Helm Chart
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: '3.12.0'
+    
+    - name: Package Helm Chart
+      run: |
+        helm package helm/syros-platform --version ${{ github.ref_name }} --app-version ${{ github.ref_name }}
+    
+    - name: Upload Helm Chart
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: ./syros-platform-${{ github.ref_name }}.tgz
+        tag_name: ${{ github.ref }}
+
+  update-homebrew:
+    name: Update Homebrew Formula
+    needs: [create-release, build-binaries]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Update Homebrew Formula
+      uses: mislav/bump-homebrew-formula-action@v2
+      with:
+        formula-name: syros-platform
+        homebrew-tap: ${{ github.repository_owner }}/homebrew-tap
+        base-branch: main
+        download-url: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/syros-platform-macos-x86_64
+      env:
+        COMMITTER_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+  notify-deployment:
+    name: Notify Deployment
+    needs: [build-binaries, build-docker, build-helm-chart]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Notify Slack
+      if: always()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#releases'
+        text: |
+          🚀 Syros Platform ${{ github.ref_name }} has been released!
+          
+          📦 Binaries: Available for Linux, macOS, and Windows
+          🐳 Docker: `ghcr.io/${{ github.repository_owner }}/syros-platform:${{ github.ref_name }}`
+          ⚡ Helm: `helm install syros-platform oci://ghcr.io/${{ github.repository_owner }}/charts/syros-platform --version ${{ github.ref_name }}`
+          
+          View release: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
