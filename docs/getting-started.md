@@ -1,101 +1,101 @@
-# Guia de Início Rápido
+# Quick Start Guide
 
-Este guia te ajudará a começar rapidamente com a Syros Platform.
+This guide will help you get started quickly with Syros Platform.
 
-## Pré-requisitos
+## Prerequisites
 
-- **Rust 1.70+** - [Instalar Rust](https://rustup.rs/)
-- **Docker** (opcional) - [Instalar Docker](https://docs.docker.com/get-docker/)
-- **Python 3.8+** (para testes) - [Instalar Python](https://www.python.org/downloads/)
+- **Rust 1.70+** - [Install Rust](https://rustup.rs/)
+- **Docker** (optional) - [Install Docker](https://docs.docker.com/get-docker/)
+- **Python 3.8+** (for testing) - [Install Python](https://www.python.org/downloads/)
 
-## Instalação Rápida
+## Quick Installation
 
-### 1. Clone o Repositório
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/syros/platform.git
-cd platform
+git clone https://github.com/wendelmax/syros.git
+cd syros
 ```
 
-### 2. Compile o Projeto
+### 2. Build the Project
 
 ```bash
 cargo build --release
 ```
 
-### 3. Configure (Opcional)
+### 3. Configure (Optional)
 
 ```bash
-# Configure variáveis de ambiente
+# Set environment variables
 export SYROS_REDIS_URL="redis://localhost:6379"
 export SYROS_POSTGRES_URL="postgres://localhost:5432/syros"
 export SYROS_JWT_SECRET="your-secret-key"
 ```
 
-### 4. Inicie o Servidor
+### 4. Start the Server
 
 ```bash
-# Iniciar todos os servidores
+# Start all servers
 cargo run
 
-# Ou iniciar apenas REST API
+# Or start only REST API
 cargo run -- start --servers rest --host 127.0.0.1 --port 8080
 ```
 
-## Primeiros Passos
+## First Steps
 
-### Teste Básico
+### Basic Test
 
 ```bash
-# 1. Verificar se o servidor está rodando
+# 1. Check if server is running
 curl http://localhost:8080/health
 
-# Resposta esperada:
+# Expected response:
 # {"status":"healthy","timestamp":"2025-09-19T10:00:00Z"}
 ```
 
-### Exemplo com Lock
+### Lock Example
 
 ```bash
-# 1. Adquirir um lock
+# 1. Acquire a lock
 curl -X POST http://localhost:8080/api/v1/locks \
   -H "Content-Type: application/json" \
   -d '{
-    "key": "meu-recurso",
+    "key": "my-resource",
     "ttl": 300,
-    "owner": "meu-servico"
+    "owner": "my-service"
   }'
 
-# 2. Verificar status
-curl http://localhost:8080/api/v1/locks/meu-recurso/status
+# 2. Check status
+curl http://localhost:8080/api/v1/locks/my-resource/status
 
-# 3. Liberar lock
-curl -X DELETE http://localhost:8080/api/v1/locks/meu-recurso \
+# 3. Release lock
+curl -X DELETE http://localhost:8080/api/v1/locks/my-resource \
   -H "Content-Type: application/json" \
-  -d '{"lock_id": "lock-uuid-retornado"}'
+  -d '{"lock_id": "returned-lock-uuid"}'
 ```
 
-### Exemplo com Cache
+### Cache Example
 
 ```bash
-# 1. Armazenar no cache
+# 1. Store in cache
 curl -X POST http://localhost:8080/api/v1/cache \
   -H "Content-Type: application/json" \
   -d '{
-    "key": "usuario-123",
-    "value": {"nome": "João", "email": "joao@example.com"},
+    "key": "user-123",
+    "value": {"name": "John", "email": "john@example.com"},
     "ttl": 3600
   }'
 
-# 2. Recuperar do cache
-curl http://localhost:8080/api/v1/cache/usuario-123
+# 2. Retrieve from cache
+curl http://localhost:8080/api/v1/cache/user-123
 ```
 
-## Configuração Básica
+## Basic Configuration
 
-### Arquivo de Configuração
+### Configuration File
 
-Crie `config/default.toml`:
+Create `config/default.toml`:
 
 ```toml
 [server]
@@ -115,8 +115,8 @@ pool_size = 10
 timeout_seconds = 30
 
 [security]
-jwt_secret = "sua-chave-secreta-jwt"
-api_key_encryption_key = "sua-chave-criptografia-api"
+jwt_secret = "your-jwt-secret-key"
+api_key_encryption_key = "your-api-encryption-key"
 cors_origins = ["*"]
 
 [logging]
@@ -125,15 +125,15 @@ format = "json"
 output = "stdout"
 ```
 
-## Modos de Execução
+## Execution Modes
 
-### Servidor Completo
+### Complete Server
 
 ```bash
 cargo run -- start --servers all
 ```
 
-### Apenas REST API
+### REST API Only
 
 ```bash
 cargo run -- start --servers rest --host 127.0.0.1 --port 8080
@@ -145,140 +145,140 @@ cargo run -- start --servers rest --host 127.0.0.1 --port 8080
 cargo run -- start --servers rest,grpc --host 0.0.0.0 --port 8080 --grpc-port 9090
 ```
 
-### Modo Verbose
+### Verbose Mode
 
 ```bash
 cargo run -- --verbose start --servers all
 ```
 
-### Modo Quiet
+### Quiet Mode
 
 ```bash
 cargo run -- --quiet start --servers rest
 ```
 
-## Verificar Status
+## Check Status
 
 ### Health Checks
 
 ```bash
-# Health básico
+# Basic health
 curl http://localhost:8080/health
 
-# Health detalhado
+# Detailed health
 curl http://localhost:8080/ready
 
-# Health para Kubernetes
+# Health for Kubernetes
 curl http://localhost:8080/live
 ```
 
-### Métricas
+### Metrics
 
 ```bash
-# Ver métricas Prometheus
+# View Prometheus metrics
 curl http://localhost:8080/metrics
 ```
 
-## Testes
+## Testing
 
-### Executar Todos os Testes
+### Run All Tests
 
 ```bash
 cargo test
 ```
 
-### Executar Testes de Integração
+### Run Integration Tests
 
 ```bash
 cargo test --test integration_test
 ```
 
-### Executar com Cobertura
+### Run with Coverage
 
 ```bash
 cargo test -- --nocapture
 ```
 
-## Docker (Opcional)
+## Docker (Optional)
 
-### Usando Docker Compose
+### Using Docker Compose
 
 ```bash
-# Iniciar com Docker Compose
+# Start with Docker Compose
 docker-compose up -d
 
-# Verificar logs
+# Check logs
 docker-compose logs -f syros-platform
 
-# Parar
+# Stop
 docker-compose down
 ```
 
-### Usando Docker
+### Using Docker
 
 ```bash
-# Build da imagem
+# Build image
 docker build -t syros-platform .
 
-# Executar container
+# Run container
 docker run -p 8080:8080 -p 9090:9090 syros-platform
 ```
 
-## Próximos Passos
+## Next Steps
 
-Agora que você tem a Syros Platform rodando:
+Now that you have Syros Platform running:
 
-1. **Explore as APIs**: Veja [REST API](rest-api.md), [gRPC API](grpc-api.md), [WebSocket API](websocket-api.md)
-2. **Use os SDKs**: Consulte [SDKs](sdks.md) para sua linguagem preferida
-3. **Configure Observabilidade**: Veja [Observabilidade](observability.md)
-4. **Deploy em Produção**: Consulte [Deployment](deployment.md)
+1. **Explore the APIs**: See [REST API](rest-api.md), [gRPC API](grpc-api.md), [WebSocket API](websocket-api.md)
+2. **Use the SDKs**: Check [SDKs](sdks.md) for your preferred language
+3. **Set up Observability**: See [Observability](observability.md)
+4. **Deploy to Production**: Check [Deployment](deployment.md)
 
-## Problemas Comuns
+## Common Issues
 
-### Porta já em uso
+### Port already in use
 
 ```bash
-# Verificar processos usando a porta
+# Check processes using the port
 netstat -tulpn | grep :8080
 
-# Matar processo (Linux/Mac)
+# Kill process (Linux/Mac)
 sudo kill -9 $(lsof -t -i:8080)
 
-# Matar processo (Windows)
+# Kill process (Windows)
 taskkill /F /IM syros-platform.exe
 ```
 
-### Erro de conexão Redis/PostgreSQL
+### Redis/PostgreSQL connection error
 
 ```bash
-# Verificar se os serviços estão rodando
+# Check if services are running
 docker ps | grep redis
 docker ps | grep postgres
 
-# Iniciar com Docker Compose
+# Start with Docker Compose
 docker-compose up -d redis postgres
 ```
 
-### Erro de compilação
+### Compilation error
 
 ```bash
-# Atualizar Rust
+# Update Rust
 rustup update
 
-# Limpar cache
+# Clean cache
 cargo clean
 
-# Recompilar
+# Rebuild
 cargo build --release
 ```
 
-## Recursos Adicionais
+## Additional Resources
 
-- [Arquitetura da Plataforma](architecture.md)
-- [Configuração Avançada](configuration.md)
+- [Platform Architecture](architecture.md)
+- [Advanced Configuration](configuration.md)
 - [FAQ](faq.md)
 - [Changelog](../CHANGELOG.md)
 
 ---
 
-**Precisa de ajuda?** Abra uma [issue](https://github.com/syros/platform/issues) ou consulte a [FAQ](faq.md)!
+**Need help?** Open an [issue](https://github.com/wendelmax/syros/issues) or check the [FAQ](faq.md)!

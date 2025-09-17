@@ -1,6 +1,6 @@
 # Scripts de Publicação dos SDKs
 
-Este diretório contém scripts para publicar todos os SDKs do Syros Platform nos respectivos package managers.
+Este diretório contém scripts para publicar todos os SDKs do Syros nos respectivos package managers.
 
 ## Scripts Disponíveis
 

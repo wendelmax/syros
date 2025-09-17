@@ -1,4 +1,4 @@
-//! Configuration management for the Syros Platform.
+//! Configuration management for the Syros.
 //!
 //! This module handles loading and managing configuration settings
 //! from TOML files and environment variables.

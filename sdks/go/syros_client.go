@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// SyrosClient provides a Go interface to interact with Syros Platform
+// SyrosClient provides a Go interface to interact with Syros
 type SyrosClient struct {
 	httpClient *http.Client
 	restURL    string

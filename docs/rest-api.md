@@ -1,16 +1,16 @@
 # REST API
 
-A REST API da Syros Platform oferece uma interface HTTP simples e intuitiva para todas as funcionalidades da plataforma.
+Syros Platform's REST API offers a simple and intuitive HTTP interface for all platform functionalities.
 
-## 🔗 Endpoints Base
+## 🔗 Base Endpoints
 
 - **Base URL**: `http://localhost:8080`
 - **Content-Type**: `application/json`
-- **Autenticação**: Bearer Token (JWT) ou API Key
+- **Authentication**: Bearer Token (JWT) or API Key
 
-## Autenticação
+## Authentication
 
-### Obter Token JWT
+### Get JWT Token
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/login \
@@ -21,7 +21,7 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
   }'
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -30,7 +30,7 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 }
 ```
 
-### Usar Token
+### Use Token
 
 ```bash
 export TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -46,9 +46,9 @@ curl -H "X-API-Key: your-api-key" \
   http://localhost:8080/api/v1/locks
 ```
 
-## Gerenciamento de Locks
+## Lock Management
 
-### Adquirir Lock
+### Acquire Lock
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/locks \
@@ -61,7 +61,7 @@ curl -X POST http://localhost:8080/api/v1/locks \
   }'
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "lock_id": "lock-uuid-123",
@@ -72,14 +72,14 @@ curl -X POST http://localhost:8080/api/v1/locks \
 }
 ```
 
-### Verificar Status do Lock
+### Check Lock Status
 
 ```bash
 curl -X GET http://localhost:8080/api/v1/locks/resource-123/status \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "lock_id": "lock-uuid-123",
@@ -91,7 +91,7 @@ curl -X GET http://localhost:8080/api/v1/locks/resource-123/status \
 }
 ```
 
-### Liberar Lock
+### Release Lock
 
 ```bash
 curl -X DELETE http://localhost:8080/api/v1/locks/resource-123 \
@@ -100,7 +100,7 @@ curl -X DELETE http://localhost:8080/api/v1/locks/resource-123 \
   -d '{"lock_id": "lock-uuid-123"}'
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "lock_id": "lock-uuid-123",
@@ -109,7 +109,7 @@ curl -X DELETE http://localhost:8080/api/v1/locks/resource-123 \
 }
 ```
 
-### Estender Lock
+### Extend Lock
 
 ```bash
 curl -X PUT http://localhost:8080/api/v1/locks/resource-123/extend \
@@ -121,16 +121,16 @@ curl -X PUT http://localhost:8080/api/v1/locks/resource-123/extend \
   }'
 ```
 
-### Listar Locks
+### List Locks
 
 ```bash
 curl -X GET "http://localhost:8080/api/v1/locks?owner=service-a&limit=10&offset=0" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-## Orquestração de Sagas
+## Saga Orchestration
 
-### Iniciar Saga
+### Start Saga
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/sagas \
@@ -161,7 +161,7 @@ curl -X POST http://localhost:8080/api/v1/sagas \
   }'
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "saga_id": "saga-uuid-456",
@@ -172,14 +172,14 @@ curl -X POST http://localhost:8080/api/v1/sagas \
 }
 ```
 
-### Verificar Status da Saga
+### Check Saga Status
 
 ```bash
 curl -X GET http://localhost:8080/api/v1/sagas/saga-uuid-456/status \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "saga_id": "saga-uuid-456",
@@ -203,7 +203,7 @@ curl -X GET http://localhost:8080/api/v1/sagas/saga-uuid-456/status \
 }
 ```
 
-### Executar Próximo Passo
+### Execute Next Step
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/sagas/saga-uuid-456/execute \
@@ -215,14 +215,14 @@ curl -X POST http://localhost:8080/api/v1/sagas/saga-uuid-456/execute \
   }'
 ```
 
-### Cancelar Saga
+### Cancel Saga
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/sagas/saga-uuid-456/cancel \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-### Listar Sagas
+### List Sagas
 
 ```bash
 curl -X GET "http://localhost:8080/api/v1/sagas?status=running&limit=10" \
@@ -231,7 +231,7 @@ curl -X GET "http://localhost:8080/api/v1/sagas?status=running&limit=10" \
 
 ## Event Store
 
-### Adicionar Evento
+### Add Event
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/events \
@@ -252,7 +252,7 @@ curl -X POST http://localhost:8080/api/v1/events \
   }'
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "event_id": "event-uuid-789",
@@ -263,23 +263,23 @@ curl -X POST http://localhost:8080/api/v1/events \
 }
 ```
 
-### Buscar Eventos
+### Search Events
 
 ```bash
-# Buscar todos os eventos de um stream
+# Search all events from a stream
 curl -X GET "http://localhost:8080/api/v1/events/user-123?limit=10&offset=0" \
   -H "Authorization: Bearer $TOKEN"
 
-# Buscar eventos por tipo
+# Search events by type
 curl -X GET "http://localhost:8080/api/v1/events/user-123?event_type=user_created" \
   -H "Authorization: Bearer $TOKEN"
 
-# Buscar eventos por data
+# Search events by date
 curl -X GET "http://localhost:8080/api/v1/events/user-123?from=2025-09-19T00:00:00Z&to=2025-09-19T23:59:59Z" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "events": [
@@ -305,16 +305,16 @@ curl -X GET "http://localhost:8080/api/v1/events/user-123?from=2025-09-19T00:00:
 }
 ```
 
-### Informações do Stream
+### Stream Information
 
 ```bash
 curl -X GET http://localhost:8080/api/v1/events/user-123/info \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-## Cache Distribuído
+## Distributed Cache
 
-### Armazenar no Cache
+### Store in Cache
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/cache \
@@ -323,8 +323,8 @@ curl -X POST http://localhost:8080/api/v1/cache \
   -d '{
     "key": "user-profile-123",
     "value": {
-      "name": "João Silva",
-      "email": "joao@example.com",
+      "name": "John Silva",
+      "email": "john@example.com",
       "preferences": {"theme": "dark"}
     },
     "ttl": 3600,
@@ -332,7 +332,7 @@ curl -X POST http://localhost:8080/api/v1/cache \
   }'
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "key": "user-profile-123",
@@ -341,20 +341,20 @@ curl -X POST http://localhost:8080/api/v1/cache \
 }
 ```
 
-### Recuperar do Cache
+### Retrieve from Cache
 
 ```bash
 curl -X GET http://localhost:8080/api/v1/cache/user-profile-123 \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "key": "user-profile-123",
   "value": {
-    "name": "João Silva",
-    "email": "joao@example.com",
+    "name": "John Silva",
+    "email": "john@example.com",
     "preferences": {"theme": "dark"}
   },
   "expires_at": "2025-09-19T11:00:00Z",
@@ -362,14 +362,14 @@ curl -X GET http://localhost:8080/api/v1/cache/user-profile-123 \
 }
 ```
 
-### Deletar do Cache
+### Delete from Cache
 
 ```bash
 curl -X DELETE http://localhost:8080/api/v1/cache/user-profile-123 \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "key": "user-profile-123",
@@ -377,7 +377,7 @@ curl -X DELETE http://localhost:8080/api/v1/cache/user-profile-123 \
 }
 ```
 
-### Listar Cache por Tags
+### List Cache by Tags
 
 ```bash
 curl -X GET "http://localhost:8080/api/v1/cache?tags=user&limit=10" \
@@ -386,13 +386,13 @@ curl -X GET "http://localhost:8080/api/v1/cache?tags=user&limit=10" \
 
 ## Health Checks
 
-### Health Básico
+### Basic Health
 
 ```bash
 curl http://localhost:8080/health
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "status": "healthy",
@@ -401,13 +401,13 @@ curl http://localhost:8080/health
 }
 ```
 
-### Health Detalhado
+### Detailed Health
 
 ```bash
 curl http://localhost:8080/ready
 ```
 
-**Resposta:**
+**Response:**
 ```json
 {
   "status": "ready",
@@ -421,21 +421,21 @@ curl http://localhost:8080/ready
 }
 ```
 
-### Health para Kubernetes
+### Health for Kubernetes
 
 ```bash
 curl http://localhost:8080/live
 ```
 
-## Métricas
+## Metrics
 
-### Endpoint de Métricas
+### Metrics Endpoint
 
 ```bash
 curl http://localhost:8080/metrics
 ```
 
-**Exemplo de métricas:**
+**Example metrics:**
 ```
 # HELP syros_http_requests_total Total HTTP requests
 # TYPE syros_http_requests_total counter
@@ -450,7 +450,7 @@ syros_locks_acquired_total{owner="service-a"} 15
 syros_cache_hits_total{key="user-profile-123"} 25
 ```
 
-## Códigos de Erro
+## Error Codes
 
 ### 400 Bad Request
 ```json
@@ -515,21 +515,21 @@ syros_cache_hits_total{key="user-profile-123"} 25
 }
 ```
 
-## Headers Personalizados
+## Custom Headers
 
 ### Rate Limiting
 
 ```bash
-# Headers retornados para rate limiting
+# Headers returned for rate limiting
 X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 999
 X-RateLimit-Reset: 1634567890
 ```
 
-### Paginação
+### Pagination
 
 ```bash
-# Headers para paginação
+# Headers for pagination
 X-Total-Count: 150
 X-Page-Size: 10
 X-Page-Number: 1
@@ -539,26 +539,26 @@ X-Has-More: true
 ### CORS
 
 ```bash
-# Headers CORS
+# CORS headers
 Access-Control-Allow-Origin: *
 Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
 Access-Control-Allow-Headers: Content-Type, Authorization, X-API-Key
 ```
 
-## Exemplos Práticos
+## Practical Examples
 
-### Exemplo Completo: Processamento de Pedido
+### Complete Example: Order Processing
 
 ```bash
 #!/bin/bash
 
-# 1. Autenticar
+# 1. Authenticate
 TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "password"}' | \
   jq -r '.token')
 
-# 2. Adquirir lock para o pedido
+# 2. Acquire lock for order
 LOCK_RESPONSE=$(curl -s -X POST http://localhost:8080/api/v1/locks \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
@@ -571,24 +571,24 @@ LOCK_RESPONSE=$(curl -s -X POST http://localhost:8080/api/v1/locks \
 LOCK_ID=$(echo $LOCK_RESPONSE | jq -r '.lock_id')
 
 if [ "$(echo $LOCK_RESPONSE | jq -r '.acquired')" = "true" ]; then
-  echo "Lock adquirido: $LOCK_ID"
+  echo "Lock acquired: $LOCK_ID"
   
-  # 3. Processar pedido
-  echo "Processando pedido..."
+  # 3. Process order
+  echo "Processing order..."
   sleep 2
   
-  # 4. Liberar lock
+  # 4. Release lock
   curl -s -X DELETE http://localhost:8080/api/v1/locks/order-123 \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
     -d "{\"lock_id\": \"$LOCK_ID\"}"
   
-  echo "Lock liberado"
+  echo "Lock released"
 else
-  echo "Falha ao adquirir lock"
+  echo "Failed to acquire lock"
 fi
 ```
 
 ---
 
-**Próximo**: [gRPC API](grpc-api.md) | [WebSocket API](websocket-api.md) | [SDKs](sdks.md)
+**Next**: [gRPC API](grpc-api.md) | [WebSocket API](websocket-api.md) | [SDKs](sdks.md)

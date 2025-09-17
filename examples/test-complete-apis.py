@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Teste completo de todas as APIs da Syros Platform
+Teste completo de todas as APIs da Syros
 """
 
 import requests
@@ -9,7 +9,7 @@ import time
 
 def test_all_apis():
     """Testa todas as APIs implementadas"""
-    print("🚀 Syros Platform - Teste Completo de APIs")
+    print("🚀 Syros - Teste Completo de APIs")
     print("=" * 60)
     
     base_url = "http://localhost:8080"
@@ -243,7 +243,7 @@ def test_all_apis():
     
     if success_count == total_tests:
         print("🎉 TODOS OS TESTES PASSARAM!")
-        print("🚀 Syros Platform está funcionando perfeitamente!")
+        print("🚀 Syros está funcionando perfeitamente!")
     elif success_count >= total_tests * 0.8:
         print("✅ Maioria dos testes passou - plataforma funcional!")
     else:

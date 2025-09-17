@@ -4,7 +4,7 @@
 
 set -e
 
-echo "🚀 Publicando todos os SDKs do Syros Platform..."
+echo "🚀 Publicando todos os SDKs do Syros..."
 echo "=================================================="
 
 # Tornar scripts executáveis

@@ -1,30 +1,30 @@
-# FAQ - Perguntas Frequentes
+# FAQ - Frequently Asked Questions
 
-## Instalação e Configuração
+## Installation and Setup
 
-### Como instalar a Syros Platform?
+### How to install Syros?
 
 ```bash
-# 1. Clone o repositório
-git clone https://github.com/syros/platform.git
-cd platform
+# 1. Clone the repository
+git clone https://github.com/wendelmax/syros.git
+cd syros
 
-# 2. Compile o projeto
+# 2. Build the project
 cargo build --release
 
-# 3. Inicie o servidor
+# 3. Start the server
 cargo run
 ```
 
-### Quais são os pré-requisitos?
+### What are the prerequisites?
 
-- **Rust 1.70+** - [Instalar Rust](https://rustup.rs/)
-- **Docker** (opcional) - [Instalar Docker](https://docs.docker.com/get-docker/)
-- **Python 3.8+** (para testes) - [Instalar Python](https://www.python.org/downloads/)
+- **Rust 1.70+** - [Install Rust](https://rustup.rs/)
+- **Docker** (optional) - [Install Docker](https://docs.docker.com/get-docker/)
+- **Python 3.8+** (for testing) - [Install Python](https://www.python.org/downloads/)
 
-### Como configurar o servidor?
+### How to configure the server?
 
-Crie um arquivo `config/default.toml`:
+Create a `config/default.toml` file:
 
 ```toml
 [server]
@@ -54,12 +54,12 @@ format = "json"
 output = "stdout"
 ```
 
-## Uso e Funcionalidades
+## Usage and Features
 
-### Como usar locks distribuídos?
+### How to use distributed locks?
 
 ```bash
-# 1. Adquirir lock
+# 1. Acquire lock
 curl -X POST http://localhost:8080/api/v1/locks \
   -H "Content-Type: application/json" \
   -d '{
@@ -68,19 +68,19 @@ curl -X POST http://localhost:8080/api/v1/locks \
     "owner": "service-a"
   }'
 
-# 2. Verificar status
+# 2. Check status
 curl http://localhost:8080/api/v1/locks/resource-123/status
 
-# 3. Liberar lock
+# 3. Release lock
 curl -X DELETE http://localhost:8080/api/v1/locks/resource-123 \
   -H "Content-Type: application/json" \
   -d '{"lock_id": "lock-uuid-123"}'
 ```
 
-### Como usar sagas para transações distribuídas?
+### How to use sagas for distributed transactions?
 
 ```bash
-# 1. Iniciar saga
+# 1. Start saga
 curl -X POST http://localhost:8080/api/v1/sagas \
   -H "Content-Type: application/json" \
   -d '{
@@ -98,16 +98,16 @@ curl -X POST http://localhost:8080/api/v1/sagas \
     ]
   }'
 
-# 2. Executar passo
+# 2. Execute step
 curl -X POST http://localhost:8080/api/v1/sagas/saga-uuid-456/execute \
   -H "Content-Type: application/json" \
   -d '{"step_id": "validate-order", "data": {"order_id": "123"}}'
 ```
 
-### Como usar o Event Store?
+### How to use Event Store?
 
 ```bash
-# 1. Adicionar evento
+# 1. Add event
 curl -X POST http://localhost:8080/api/v1/events \
   -H "Content-Type: application/json" \
   -d '{
@@ -119,52 +119,52 @@ curl -X POST http://localhost:8080/api/v1/events \
     }
   }'
 
-# 2. Buscar eventos
+# 2. Search events
 curl "http://localhost:8080/api/v1/events/user-123?limit=10"
 ```
 
-### Como usar o cache distribuído?
+### How to use distributed cache?
 
 ```bash
-# 1. Armazenar no cache
+# 1. Store in cache
 curl -X POST http://localhost:8080/api/v1/cache \
   -H "Content-Type: application/json" \
   -d '{
     "key": "user-profile-123",
-    "value": {"name": "João", "email": "joao@example.com"},
+    "value": {"name": "John", "email": "john@example.com"},
     "ttl": 3600
   }'
 
-# 2. Recuperar do cache
+# 2. Retrieve from cache
 curl http://localhost:8080/api/v1/cache/user-profile-123
 ```
 
-## Autenticação e Segurança
+## Authentication and Security
 
-### Como autenticar na API?
+### How to authenticate with the API?
 
 ```bash
-# 1. Obter token JWT
+# 1. Get JWT token
 curl -X POST http://localhost:8080/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "password"}'
 
-# 2. Usar token nas requisições
+# 2. Use token in requests
 export TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/locks
 ```
 
-### Como usar API Keys?
+### How to use API Keys?
 
 ```bash
-# Usar API Key nas requisições
+# Use API Key in requests
 curl -H "X-API-Key: your-api-key" http://localhost:8080/api/v1/locks
 ```
 
-### Como configurar RBAC?
+### How to configure RBAC?
 
 ```bash
-# Criar usuário com roles
+# Create user with roles
 curl -X POST http://localhost:8080/api/v1/auth/users \
   -H "Content-Type: application/json" \
   -d '{
@@ -174,53 +174,53 @@ curl -X POST http://localhost:8080/api/v1/auth/users \
   }'
 ```
 
-## Docker e Deployment
+## Docker and Deployment
 
-### Como usar Docker?
+### How to use Docker?
 
 ```bash
-# 1. Build da imagem
+# 1. Build image
 docker build -t syros-platform .
 
-# 2. Executar container
+# 2. Run container
 docker run -p 8080:8080 -p 9090:9090 syros-platform
 
-# 3. Usar Docker Compose
+# 3. Use Docker Compose
 docker-compose up -d
 ```
 
-### Como fazer deploy no Kubernetes?
+### How to deploy to Kubernetes?
 
 ```bash
-# 1. Aplicar manifests
+# 1. Apply manifests
 kubectl apply -f k8s/
 
-# 2. Verificar pods
+# 2. Check pods
 kubectl get pods -l app=syros-platform
 
-# 3. Ver logs
+# 3. Check logs
 kubectl logs -f deployment/syros-platform
 ```
 
-### Como usar Helm?
+### How to use Helm?
 
 ```bash
-# 1. Instalar chart
+# 1. Install chart
 helm install syros-platform ./helm/syros-platform
 
-# 2. Atualizar
+# 2. Update
 helm upgrade syros-platform ./helm/syros-platform
 
-# 3. Desinstalar
+# 3. Uninstall
 helm uninstall syros-platform
 ```
 
-## Monitoramento e Observabilidade
+## Monitoring and Observability
 
-### Como acessar métricas?
+### How to access metrics?
 
 ```bash
-# Métricas Prometheus
+# Prometheus metrics
 curl http://localhost:8080/metrics
 
 # Health checks
@@ -229,14 +229,14 @@ curl http://localhost:8080/ready
 curl http://localhost:8080/live
 ```
 
-### Como configurar Grafana?
+### How to configure Grafana?
 
-1. Instale Grafana
-2. Configure Prometheus como fonte de dados
-3. Importe os dashboards da pasta `grafana/`
-4. Visualize métricas em tempo real
+1. Install Grafana
+2. Configure Prometheus as data source
+3. Import dashboards from `grafana/` folder
+4. Visualize real-time metrics
 
-### Como configurar logs estruturados?
+### How to configure structured logs?
 
 ```toml
 [logging]
@@ -245,22 +245,22 @@ format = "json"
 output = "stdout"
 ```
 
-## Testes
+## Testing
 
-### Como executar testes?
+### How to run tests?
 
 ```bash
-# Todos os testes
+# All tests
 cargo test
 
-# Testes de integração
+# Integration tests
 cargo test --test integration_test
 
-# Testes com output
+# Tests with output
 cargo test -- --nocapture
 ```
 
-### Como usar mocks para testes?
+### How to use mocks for testing?
 
 ```rust
 use syros_platform::mock_server::{MockServer, with_mock_server};
@@ -268,7 +268,7 @@ use syros_platform::mock_server::{MockServer, with_mock_server};
 #[tokio::test]
 async fn test_with_mock() {
     with_mock_server(|server| async move {
-        // Seus testes aqui
+        // Your tests here
         let response = server.rest_url();
         assert!(response.contains("http://"));
     }).await.unwrap();
@@ -277,50 +277,50 @@ async fn test_with_mock() {
 
 ## Troubleshooting
 
-### Erro: "Porta já em uso"
+### Error: "Port already in use"
 
 ```bash
-# Verificar processos usando a porta
+# Check processes using the port
 netstat -tulpn | grep :8080
 
-# Matar processo (Linux/Mac)
+# Kill process (Linux/Mac)
 sudo kill -9 $(lsof -t -i:8080)
 
-# Matar processo (Windows)
+# Kill process (Windows)
 taskkill /F /IM syros-platform.exe
 ```
 
-### Erro: "Conexão recusada Redis/PostgreSQL"
+### Error: "Connection refused Redis/PostgreSQL"
 
 ```bash
-# Verificar se os serviços estão rodando
+# Check if services are running
 docker ps | grep redis
 docker ps | grep postgres
 
-# Iniciar com Docker Compose
+# Start with Docker Compose
 docker-compose up -d redis postgres
 ```
 
-### Erro: "Falha na compilação"
+### Error: "Compilation failed"
 
 ```bash
-# Atualizar Rust
+# Update Rust
 rustup update
 
-# Limpar cache
+# Clean cache
 cargo clean
 
-# Recompilar
+# Rebuild
 cargo build --release
 ```
 
-### Erro: "Token inválido"
+### Error: "Invalid token"
 
 ```bash
-# Verificar se o token está correto
+# Check if token is correct
 echo $TOKEN
 
-# Obter novo token
+# Get new token
 curl -X POST http://localhost:8080/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "password"}'
@@ -328,7 +328,7 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 
 ## SDKs
 
-### Como usar o Python SDK?
+### How to use Python SDK?
 
 ```python
 from syros_platform import SyrosClient
@@ -338,7 +338,7 @@ client = SyrosClient(
     api_key="your-api-key"
 )
 
-# Adquirir lock
+# Acquire lock
 lock = client.locks.acquire(
     key="resource-123",
     ttl=300,
@@ -346,7 +346,7 @@ lock = client.locks.acquire(
 )
 ```
 
-### Como usar o Node.js SDK?
+### How to use Node.js SDK?
 
 ```javascript
 const { SyrosClient } = require('@syros/platform-sdk');
@@ -356,7 +356,7 @@ const client = new SyrosClient({
   apiKey: 'your-api-key'
 });
 
-// Adquirir lock
+// Acquire lock
 const lock = await client.locks.acquire({
   key: 'resource-123',
   ttl: 300,
@@ -364,7 +364,7 @@ const lock = await client.locks.acquire({
 });
 ```
 
-### Como usar o Java SDK?
+### How to use Java SDK?
 
 ```java
 import com.syros.platform.SyrosClient;
@@ -374,7 +374,7 @@ SyrosClient client = new SyrosClient.Builder()
     .apiKey("your-api-key")
     .build();
 
-// Adquirir lock
+// Acquire lock
 AcquireLockRequest request = AcquireLockRequest.builder()
     .key("resource-123")
     .ttl(300)
@@ -386,25 +386,25 @@ LockResponse lock = client.locks().acquire(request);
 
 ## Performance
 
-### Qual é a performance da plataforma?
+### What is the platform's performance?
 
-- **Locks**: ~10,000 operações/segundo
-- **Cache**: ~50,000 operações/segundo
-- **Event Store**: ~5,000 eventos/segundo
-- **gRPC**: ~20,000 requisições/segundo
-- **REST API**: ~5,000 requisições/segundo
+- **Locks**: ~10,000 operations/second
+- **Cache**: ~50,000 operations/second
+- **Event Store**: ~5,000 events/second
+- **gRPC**: ~20,000 requests/second
+- **REST API**: ~5,000 requests/second
 
-### Como otimizar performance?
+### How to optimize performance?
 
-1. **Use gRPC** para alta performance
-2. **Configure connection pooling** adequadamente
-3. **Use cache** para dados frequentemente acessados
-4. **Monitore métricas** para identificar gargalos
-5. **Configure retry policies** adequadamente
+1. **Use gRPC** for high performance
+2. **Configure connection pooling** properly
+3. **Use cache** for frequently accessed data
+4. **Monitor metrics** to identify bottlenecks
+5. **Configure retry policies** properly
 
-## Segurança
+## Security
 
-### Como configurar HTTPS?
+### How to configure HTTPS?
 
 ```toml
 [server]
@@ -412,14 +412,14 @@ tls_cert = "/path/to/cert.pem"
 tls_key = "/path/to/key.pem"
 ```
 
-### Como configurar CORS?
+### How to configure CORS?
 
 ```toml
 [security]
 cors_origins = ["https://example.com", "https://app.example.com"]
 ```
 
-### Como configurar rate limiting?
+### How to configure rate limiting?
 
 ```toml
 [security]
@@ -427,50 +427,50 @@ rate_limit_requests = 1000
 rate_limit_window = 3600
 ```
 
-## Escalabilidade
+## Scalability
 
-### Como escalar horizontalmente?
+### How to scale horizontally?
 
 1. **Use load balancer** (nginx, HAProxy)
 2. **Configure service discovery** (Consul)
-3. **Use Redis Cluster** para locks e cache
-4. **Configure PostgreSQL replication** para Event Store
-5. **Use Kubernetes** para orquestração
+3. **Use Redis Cluster** for locks and cache
+4. **Configure PostgreSQL replication** for Event Store
+5. **Use Kubernetes** for orchestration
 
-### Como monitorar escalabilidade?
+### How to monitor scalability?
 
-1. **Métricas de CPU e memória**
-2. **Latência de requisições**
-3. **Throughput por segundo**
-4. **Taxa de erro**
-5. **Utilização de recursos**
+1. **CPU and memory metrics**
+2. **Request latency**
+3. **Throughput per second**
+4. **Error rate**
+5. **Resource utilization**
 
-## Suporte
+## Support
 
-### Como obter ajuda?
+### How to get help?
 
-1. **Consulte a documentação** em [`docs/`](docs/)
-2. **Abra uma issue** no [GitHub](https://github.com/syros/platform/issues)
-3. **Participe da comunidade** no Discord
-4. **Consulte os exemplos** na pasta `examples/`
+1. **Check documentation** in [`docs/`](docs/)
+2. **Open an issue** on [GitHub](https://github.com/wendelmax/syros/issues)
+3. **Join the community** on Discord
+4. **Check examples** in `examples/` folder
 
-### Como reportar bugs?
+### How to report bugs?
 
-1. **Verifique se já existe** uma issue similar
-2. **Crie uma nova issue** com:
-   - Descrição do problema
-   - Passos para reproduzir
-   - Logs relevantes
-   - Versão da plataforma
-   - Sistema operacional
+1. **Check if a similar issue already exists**
+2. **Create a new issue** with:
+   - Problem description
+   - Steps to reproduce
+   - Relevant logs
+   - Platform version
+   - Operating system
 
-### Como contribuir?
+### How to contribute?
 
-1. **Fork o projeto**
-2. **Crie uma branch** para sua feature
-3. **Implemente e teste** sua mudança
-4. **Abra um Pull Request** com descrição detalhada
+1. **Fork the project**
+2. **Create a branch** for your feature
+3. **Implement and test** your change
+4. **Open a Pull Request** with detailed description
 
 ---
 
-**Precisa de mais ajuda?** Consulte a [documentação completa](README.md) ou abra uma [issue](https://github.com/syros/platform/issues)!
+**Need more help?** Check the [complete documentation](README.md) or open an [issue](https://github.com/wendelmax/syros/issues)!

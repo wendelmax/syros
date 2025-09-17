@@ -1,6 +1,6 @@
 /**
- * Syros Platform Node.js SDK
- * SDK oficial para integração com a Syros Platform
+ * Syros Node.js SDK
+ * SDK oficial para integração com a Syros
  */
 
 const axios = require('axios');
@@ -169,7 +169,7 @@ class SyrosWebSocketClient {
             this.ws = new WebSocket(this.endpoint);
             
             this.ws.on('open', () => {
-                console.log('Conectado ao WebSocket da Syros Platform');
+                console.log('Conectado ao WebSocket da Syros');
                 resolve();
             });
             

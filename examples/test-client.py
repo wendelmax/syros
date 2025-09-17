@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cliente de teste para Syros Platform
+Cliente de teste para Syros
 Demonstra o uso básico da API REST
 """
 
@@ -52,7 +52,7 @@ def test_liveness():
 
 def main():
     """Função principal"""
-    print("🚀 Syros Platform - Cliente de Teste")
+    print("🚀 Syros - Cliente de Teste")
     print("=" * 50)
     
     try:

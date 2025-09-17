@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package syros.v1;
 
-// Serviço principal do Syros Platform
+// Serviço principal do Syros
 service SyrosService {
   // Operações de Lock
   rpc AcquireLock(LockRequest) returns (LockResponse);

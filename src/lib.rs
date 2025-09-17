@@ -1,4 +1,4 @@
-//! Syros Platform - Distributed Coordination Service
+//! Syros - Distributed Coordination Service
 //!
 //! A high-performance, distributed coordination platform built in Rust that provides
 //! essential distributed system patterns including distributed locks, saga orchestration,

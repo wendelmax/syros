@@ -1,4 +1,4 @@
-//! Error types and handling for the Syros Platform.
+//! Error types and handling for the Syros.
 //!
 //! This module defines custom error types used throughout the platform
 //! for consistent error handling and reporting.

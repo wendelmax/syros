@@ -10,7 +10,7 @@ func main() {
 	client := NewSyrosClient()
 	defer client.Close()
 
-	fmt.Println("🚀 Syros Platform Go SDK Example")
+	fmt.Println("🚀 Syros Go SDK Example")
 	fmt.Println("==================================================")
 
 	// Test REST API

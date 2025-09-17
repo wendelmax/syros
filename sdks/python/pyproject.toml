@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "syros-sdk"
 version = "1.0.0"
-description = "Syros Platform Python SDK - Distributed Coordination Service"
+description = "Syros Python SDK - Distributed Coordination Service"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [

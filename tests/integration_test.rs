@@ -1,7 +1,7 @@
-//! Integration tests for the Syros Platform.
+//! Integration tests for the Syros.
 //!
 //! This module contains comprehensive integration tests that verify
-//! all functionality of the Syros Platform including core services,
+//! all functionality of the Syros including core services,
 //! APIs, authentication, and distributed coordination features.
 
 use reqwest::Client;

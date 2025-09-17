@@ -1,6 +1,6 @@
-# PowerShell script para configurar Syros Platform
+# PowerShell script para configurar Syros
 
-Write-Host "🚀 Configurando Syros Platform..." -ForegroundColor Green
+Write-Host "🚀 Configurando Syros..." -ForegroundColor Green
 
 # Verificar se Docker está instalado
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
@@ -26,18 +26,18 @@ Start-Sleep -Seconds 10
 Write-Host "🔧 Executando migrações do banco de dados..." -ForegroundColor Yellow
 docker-compose run --rm syros-platform /app/syros-platform migrate
 
-Write-Host "🚀 Iniciando Syros Platform..." -ForegroundColor Yellow
+Write-Host "🚀 Iniciando Syros..." -ForegroundColor Yellow
 docker-compose up -d syros-platform
 
 Write-Host "📊 Iniciando serviços de monitoramento..." -ForegroundColor Yellow
 docker-compose up -d prometheus grafana
 
-Write-Host "✅ Syros Platform configurado com sucesso!" -ForegroundColor Green
+Write-Host "✅ Syros configurado com sucesso!" -ForegroundColor Green
 Write-Host ""
 Write-Host "🌐 Serviços disponíveis:" -ForegroundColor Cyan
-Write-Host "  - Syros Platform API: http://localhost:8080" -ForegroundColor White
-Write-Host "  - Syros Platform gRPC: localhost:9090" -ForegroundColor White
-Write-Host "  - Syros Platform WebSocket: ws://localhost:8081" -ForegroundColor White
+Write-Host "  - Syros API: http://localhost:8080" -ForegroundColor White
+Write-Host "  - Syros gRPC: localhost:9090" -ForegroundColor White
+Write-Host "  - Syros WebSocket: ws://localhost:8081" -ForegroundColor White
 Write-Host "  - Prometheus: http://localhost:9091" -ForegroundColor White
 Write-Host "  - Grafana: http://localhost:3000 (admin/admin)" -ForegroundColor White
 Write-Host ""

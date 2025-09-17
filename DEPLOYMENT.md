@@ -1,34 +1,34 @@
-# Guia de Deployment - Syros Platform
+# Deployment Guide - Syros
 
-Este guia apresenta diferentes opções de deployment da Syros Platform, desde desenvolvimento local até produção em escala.
+This guide presents different deployment options for Syros, from local development to production at scale.
 
-## 🚀 Início Rápido
+## 🚀 Quick Start
 
-### Desenvolvimento Local
+### Local Development
 
 ```bash
-# Clone e compile
-git clone https://github.com/syros/platform.git
-cd platform
+# Clone and build
+git clone https://github.com/wendelmax/syros.git
+cd syros
 cargo build --release
 
-# Execute apenas REST API
+# Run only REST API
 cargo run -- start --servers rest --host 127.0.0.1 --port 8080
 
-# Execute todos os servidores
+# Run all servers
 cargo run -- start --servers all --host 0.0.0.0
 ```
 
 ### Docker
 
 ```bash
-# Build da imagem
+# Build image
 docker build -t syros-platform .
 
-# Execute com Docker
+# Run with Docker
 docker run -p 8080:8080 -p 9090:9090 syros-platform
 
-# Execute com configuração específica
+# Run with specific configuration
 docker run -p 8080:8080 -p 9090:9090 \
   -e SYROS_HOST=0.0.0.0 \
   -e SYROS_PORT=8080 \
@@ -36,31 +36,31 @@ docker run -p 8080:8080 -p 9090:9090 \
   syros-platform
 ```
 
-## 🏗️ Configurações de Deployment
+## 🏗️ Deployment Configurations
 
-### 1. Desenvolvimento
+### 1. Development
 
-**Configuração mínima para desenvolvimento:**
+**Minimum configuration for development:**
 
 ```bash
-# Apenas REST API
+# Only REST API
 cargo run -- start --servers rest --host 127.0.0.1 --port 3000
 
-# Com gRPC para testes
+# With gRPC for testing
 cargo run -- start --servers rest,grpc --host 127.0.0.1 --port 3000 --grpc-port 9091
 ```
 
-**Recursos necessários:**
+**Required resources:**
 - CPU: 1 core
 - RAM: 512MB
-- Disco: 1GB
+- Disk: 1GB
 
 ### 2. Staging
 
-**Configuração para ambiente de staging:**
+**Configuration for staging environment:**
 
 ```bash
-# Todos os servidores com IP específico
+# All servers with specific IP
 cargo run -- start --servers all \
   --host 192.168.1.100 \
   --port 8080 \
@@ -68,17 +68,17 @@ cargo run -- start --servers all \
   --websocket-port 8081
 ```
 
-**Recursos necessários:**
+**Required resources:**
 - CPU: 2 cores
 - RAM: 2GB
-- Disco: 10GB
+- Disk: 10GB
 
-### 3. Produção
+### 3. Production
 
-**Configuração para produção:**
+**Configuration for production:**
 
 ```bash
-# Servidor de produção com interface específica
+# Production server with specific interface
 cargo run -- start --servers all \
   --host 0.0.0.0 \
   --port 8080 \
@@ -87,15 +87,15 @@ cargo run -- start --servers all \
   --interface eth0
 ```
 
-**Recursos necessários:**
+**Required resources:**
 - CPU: 4+ cores
 - RAM: 8GB+
-- Disco: 100GB+
-- Rede: 1Gbps+
+- Disk: 100GB+
+- Network: 1Gbps+
 
 ## 🐳 Docker Deployment
 
-### Dockerfile Otimizado
+### Optimized Dockerfile
 
 ```dockerfile
 FROM rust:1.75-slim as builder
@@ -294,32 +294,32 @@ spec:
   type: LoadBalancer
 ```
 
-## 🔧 Configurações Avançadas
+## 🔧 Advanced Configurations
 
-### Variáveis de Ambiente
+### Environment Variables
 
 ```bash
-# Configuração do servidor
+# Server configuration
 export SYROS_HOST=0.0.0.0
 export SYROS_PORT=8080
 export SYROS_GRPC_PORT=9090
 export SYROS_WEBSOCKET_PORT=8081
 export SYROS_SERVERS=all
 
-# Configuração de banco
+# Database configuration
 export SYROS_REDIS_URL=redis://localhost:6379
 export SYROS_DATABASE_URL=postgresql://localhost/syros
 
-# Configuração de segurança
+# Security configuration
 export SYROS_JWT_SECRET=your-secret-key
 export SYROS_API_KEY_ENCRYPTION_KEY=your-api-key
 
-# Configuração de logging
+# Logging configuration
 export SYROS_LOG_LEVEL=info
 export SYROS_LOG_FORMAT=json
 ```
 
-### Arquivo de Configuração
+### Configuration File
 
 ```toml
 [server]
@@ -348,51 +348,51 @@ format = "json"
 output = "stdout"
 ```
 
-## 📊 Monitoramento
+## 📊 Monitoring
 
 ### Health Checks
 
 ```bash
-# Health check básico
+# Basic health check
 curl http://localhost:8080/health
 
-# Health check detalhado
+# Detailed health check
 curl http://localhost:8080/ready
 
-# Métricas Prometheus
+# Prometheus metrics
 curl http://localhost:8080/metrics
 ```
 
 ### Logs
 
 ```bash
-# Logs em tempo real
+# Real-time logs
 docker logs -f syros-platform
 
-# Logs com filtro
+# Filtered logs
 docker logs syros-platform | grep ERROR
 
-# Logs estruturados
+# Structured logs
 docker logs syros-platform | jq .
 ```
 
-## 🔒 Segurança
+## 🔒 Security
 
 ### Firewall
 
 ```bash
-# Permitir apenas portas necessárias
+# Allow only necessary ports
 ufw allow 8080/tcp  # REST API
 ufw allow 9090/tcp  # gRPC
 ufw allow 8081/tcp  # WebSocket
-ufw deny 6379/tcp   # Redis (apenas interno)
-ufw deny 5432/tcp   # PostgreSQL (apenas interno)
+ufw deny 6379/tcp   # Redis (internal only)
+ufw deny 5432/tcp   # PostgreSQL (internal only)
 ```
 
 ### SSL/TLS
 
 ```bash
-# Certificado SSL
+# SSL certificate
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
 
 # Nginx reverse proxy
@@ -411,7 +411,7 @@ server {
 }
 ```
 
-## 🚀 Escalabilidade
+## 🚀 Scalability
 
 ### Load Balancer
 
@@ -456,99 +456,99 @@ spec:
 
 ## 📈 Performance
 
-### Otimizações
+### Optimizations
 
 ```bash
-# Compilação otimizada
+# Optimized compilation
 cargo build --release --target x86_64-unknown-linux-gnu
 
-# Configuração de threads
+# Thread configuration
 export RAYON_NUM_THREADS=4
 
-# Configuração de memória
+# Memory configuration
 export MALLOC_ARENA_MAX=2
 ```
 
 ### Benchmarks
 
 ```bash
-# Teste de carga
+# Load test
 wrk -t12 -c400 -d30s http://localhost:8080/health
 
-# Teste gRPC
+# gRPC test
 ghz --insecure --call syros.v1.SyrosService/AcquireLock \
   --data '{"key":"test","owner":"test","ttl_seconds":60}' \
   localhost:9090
 ```
 
-## 🔄 Backup e Restore
+## 🔄 Backup and Restore
 
 ### Backup
 
 ```bash
-# Backup do Redis
+# Redis backup
 redis-cli --rdb /backup/redis-$(date +%Y%m%d).rdb
 
-# Backup do PostgreSQL
+# PostgreSQL backup
 pg_dump syros > /backup/postgres-$(date +%Y%m%d).sql
 ```
 
 ### Restore
 
 ```bash
-# Restore do Redis
+# Redis restore
 redis-cli --pipe < /backup/redis-20241219.rdb
 
-# Restore do PostgreSQL
+# PostgreSQL restore
 psql syros < /backup/postgres-20241219.sql
 ```
 
 ## 🆘 Troubleshooting
 
-### Problemas Comuns
+### Common Issues
 
-1. **Porta já em uso**
+1. **Port already in use**
    ```bash
-   # Verificar portas em uso
+   # Check ports in use
    netstat -tulpn | grep :8080
    
-   # Matar processo
+   # Kill process
    kill -9 $(lsof -t -i:8080)
    ```
 
-2. **Erro de conexão com Redis**
+2. **Redis connection error**
    ```bash
-   # Verificar Redis
+   # Check Redis
    redis-cli ping
    
-   # Verificar logs
+   # Check logs
    docker logs redis
    ```
 
-3. **Erro de conexão com PostgreSQL**
+3. **PostgreSQL connection error**
    ```bash
-   # Verificar PostgreSQL
+   # Check PostgreSQL
    psql -h localhost -U syros -d syros -c "SELECT 1;"
    
-   # Verificar logs
+   # Check logs
    docker logs postgres
    ```
 
-### Logs de Debug
+### Debug Logs
 
 ```bash
-# Executar com debug
+# Run with debug
 RUST_LOG=debug cargo run -- start --servers all
 
-# Logs específicos
+# Specific logs
 RUST_LOG=syros_platform=debug cargo run -- start
 ```
 
-## 📞 Suporte
+## 📞 Support
 
-Para suporte técnico:
+For technical support:
 
-- **Documentação**: [docs.syros.com](https://docs.syros.com)
-- **Issues**: [GitHub Issues](https://github.com/syros/platform/issues)
+- **Documentation**: [docs.syros.com](https://docs.syros.com)
+- **Issues**: [GitHub Issues](https://github.com/wendelmax/syros/issues)
 - **Discord**: [Syros Community](https://discord.gg/syros)
 - **Email**: support@syros.com

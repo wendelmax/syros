@@ -1,6 +1,6 @@
-# Syros Platform Go SDK
+# Syros Go SDK
 
-Este SDK fornece uma interface Go para interagir com a Syros Platform, incluindo as APIs REST e WebSocket.
+Este SDK fornece uma interface Go para interagir com a Syros, incluindo as APIs REST e WebSocket.
 
 ## Instalação
 

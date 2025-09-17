@@ -1,6 +1,6 @@
-# Syros Platform Java SDK
+# Syros Java SDK
 
-Este SDK fornece uma interface Java para interagir com a Syros Platform, incluindo as APIs REST e WebSocket.
+Este SDK fornece uma interface Java para interagir com a Syros, incluindo as APIs REST e WebSocket.
 
 ## Instalação
 

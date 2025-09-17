@@ -1,4 +1,4 @@
-//! Server module for the Syros Platform.
+//! Server module for the Syros.
 //!
 //! This module contains the main server logic for starting and managing
 //! the various server components (REST, gRPC, WebSocket) and their
@@ -20,7 +20,7 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::net::TcpListener;
 
-/// Starts the Syros Platform server with the specified configuration.
+/// Starts the Syros server with the specified configuration.
 ///
 /// This function initializes all core components, sets up service discovery,
 /// and starts the requested server types (REST, gRPC, WebSocket) concurrently.
@@ -96,7 +96,7 @@ pub async fn start_server(
         servers.contains(&ServerType::Websocket) || servers.contains(&ServerType::All);
 
     if verbose {
-        println!("Starting Syros Platform...");
+        println!("Starting Syros...");
         println!("Configuration loaded:");
         println!("   - Host: {}", config.server.host);
         if should_start_rest {

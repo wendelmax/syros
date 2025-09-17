@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Teste completo de todas as APIs da Syros Platform
+Teste completo de todas as APIs da Syros
 """
 
 import asyncio
@@ -139,7 +139,7 @@ async def test_sdk_python():
 
 async def main():
     """Executa todos os testes"""
-    print("🚀 Syros Platform - Teste Completo de APIs")
+    print("🚀 Syros - Teste Completo de APIs")
     print("=" * 50)
     
     await test_rest_api()

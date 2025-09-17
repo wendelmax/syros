@@ -1,9 +1,9 @@
 [package]
-name = "syros-platform"
+name = "syros"
 version = "1.0.0"
 edition = "2021"
 authors = ["Jackson Sá <jacksonwendel@gmail.com>"]
-description = "Syros Platform - Distributed Coordination Service"
+description = "Syros - Distributed Coordination Service"
 license = "MIT"
 repository = "https://github.com/wendelmax/syros"
 keywords = ["distributed-systems", "coordination", "locks", "sagas", "events"]

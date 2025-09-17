@@ -1,4 +1,4 @@
-//! Command Line Interface module for the Syros Platform.
+//! Command Line Interface module for the Syros.
 //!
 //! This module defines the CLI structure and argument parsing using the `clap` crate.
 //! It provides commands for starting the server, validating configuration,
@@ -6,13 +6,13 @@
 
 use clap::{Parser, Subcommand};
 
-/// Main CLI structure for the Syros Platform.
+/// Main CLI structure for the Syros.
 ///
 /// This struct defines the global command line arguments that are available
 /// across all subcommands, including verbose mode, quiet mode, and configuration file path.
 #[derive(Parser)]
 #[command(name = "syros-platform")]
-#[command(about = "Syros Platform - Distributed Coordination Service")]
+#[command(about = "Syros - Distributed Coordination Service")]
 #[command(version = env!("CARGO_PKG_VERSION"))]
 pub struct Cli {
     /// Enable verbose mode - shows detailed information
@@ -32,7 +32,7 @@ pub struct Cli {
     pub command: Option<Commands>,
 }
 
-/// Available commands for the Syros Platform CLI.
+/// Available commands for the Syros CLI.
 ///
 /// This enum defines all the subcommands that can be executed by the CLI,
 /// including starting the server, validating configuration, and displaying system information.
@@ -74,7 +74,7 @@ pub enum Commands {
     Info,
 }
 
-/// Types of servers that can be started by the Syros Platform.
+/// Types of servers that can be started by the Syros.
 ///
 /// This enum defines the different server types that can be selected
 /// when starting the platform, allowing for flexible deployment configurations.

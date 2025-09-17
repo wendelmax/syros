@@ -1,12 +1,12 @@
-# Configuração
+# Configuration
 
-Este guia detalha todas as opções de configuração disponíveis na Syros Platform.
+This guide details all available configuration options in Syros.
 
-## Estrutura de Configuração
+## Configuration Structure
 
-### Arquivo Principal
+### Main File
 
-O arquivo de configuração principal está em `config/default.toml`:
+The main configuration file is in `config/default.toml`:
 
 ```toml
 [server]
@@ -44,38 +44,38 @@ health_check_interval = 30
 tags = ["api", "grpc"]
 ```
 
-## Configuração do Servidor
+## Server Configuration
 
-### Configurações Básicas
+### Basic Settings
 
 ```toml
 [server]
-# Porta do servidor REST API
+# REST API server port
 port = 8080
 
-# Porta do servidor gRPC
+# gRPC server port
 grpc_port = 9090
 
-# Porta do servidor WebSocket
+# WebSocket server port
 websocket_port = 8081
 
-# Host/IP para binding
+# Host/IP for binding
 host = "127.0.0.1"
 
-# Interface de rede específica (opcional)
+# Specific network interface (optional)
 interface = "eth0"
 
-# Timeout para requisições (segundos)
+# Request timeout (seconds)
 request_timeout = 30
 
-# Tamanho máximo do body (bytes)
+# Maximum body size (bytes)
 max_body_size = 1048576
 
-# Número de workers (0 = automático)
+# Number of workers (0 = automatic)
 workers = 0
 ```
 
-### Configurações Avançadas
+### Advanced Settings
 
 ```toml
 [server.advanced]
@@ -88,50 +88,50 @@ tcp_keep_alive = true
 # TCP no delay
 tcp_nodelay = true
 
-# Buffer size para leitura
+# Read buffer size
 read_buffer_size = 8192
 
-# Buffer size para escrita
+# Write buffer size
 write_buffer_size = 8192
 
-# Máximo de conexões simultâneas
+# Maximum concurrent connections
 max_connections = 1000
 
-# Timeout para shutdown graceful
+# Graceful shutdown timeout
 shutdown_timeout = 30
 ```
 
-## Configuração de Storage
+## Storage Configuration
 
 ### Redis
 
 ```toml
 [storage.redis]
-# URL de conexão
+# Connection URL
 url = "redis://localhost:6379"
 
-# Tamanho do pool de conexões
+# Connection pool size
 pool_size = 10
 
-# Timeout para operações (segundos)
+# Operation timeout (seconds)
 timeout_seconds = 30
 
-# Configurações de retry
+# Retry settings
 max_retries = 3
 retry_delay = 100
 
-# Configurações de cluster
+# Cluster settings
 cluster_nodes = ["redis://node1:6379", "redis://node2:6379", "redis://node3:6379"]
 
-# Configurações de sentinel
+# Sentinel settings
 sentinel_masters = ["mymaster"]
 sentinel_nodes = ["redis://sentinel1:26379", "redis://sentinel2:26379"]
 
-# Configurações de autenticação
+# Authentication settings
 password = "your-redis-password"
 username = "your-redis-username"
 
-# Configurações de TLS
+# TLS settings
 tls_enabled = false
 tls_cert = "/path/to/cert.pem"
 tls_key = "/path/to/key.pem"
@@ -142,32 +142,32 @@ tls_ca = "/path/to/ca.pem"
 
 ```toml
 [storage.database]
-# URL de conexão
+# Connection URL
 url = "postgres://localhost:5432/syros"
 
-# Tamanho do pool de conexões
+# Connection pool size
 pool_size = 10
 
-# Timeout para operações (segundos)
+# Operation timeout (seconds)
 timeout_seconds = 30
 
-# Configurações de retry
+# Retry settings
 max_retries = 3
 retry_delay = 100
 
-# Configurações de SSL
+# SSL settings
 ssl_mode = "prefer"
 ssl_cert = "/path/to/cert.pem"
 ssl_key = "/path/to/key.pem"
 ssl_ca = "/path/to/ca.pem"
 
-# Configurações de pool
+# Pool settings
 min_connections = 1
 max_connections = 20
 connection_timeout = 30
 idle_timeout = 600
 
-# Configurações de migração
+# Migration settings
 migrate_on_startup = true
 migration_path = "migrations/"
 ```
@@ -176,52 +176,52 @@ migration_path = "migrations/"
 
 ```toml
 [storage.etcd]
-# URLs dos nós etcd
+# etcd node URLs
 endpoints = ["http://localhost:2379", "http://localhost:2380"]
 
-# Timeout para operações (segundos)
+# Operation timeout (seconds)
 timeout_seconds = 5
 
-# Configurações de retry
+# Retry settings
 max_retries = 3
 retry_delay = 100
 
-# Configurações de autenticação
+# Authentication settings
 username = "your-etcd-username"
 password = "your-etcd-password"
 
-# Configurações de TLS
+# TLS settings
 tls_enabled = false
 tls_cert = "/path/to/cert.pem"
 tls_key = "/path/to/key.pem"
 tls_ca = "/path/to/ca.pem"
 ```
 
-## Configuração de Segurança
+## Security Configuration
 
-### Autenticação JWT
+### JWT Authentication
 
 ```toml
 [security.jwt]
-# Chave secreta para assinar tokens
+# Secret key for signing tokens
 secret = "your-jwt-secret-key"
 
-# Algoritmo de assinatura
+# Signature algorithm
 algorithm = "HS256"
 
-# Tempo de expiração do token (segundos)
+# Token expiration time (seconds)
 expiration = 3600
 
-# Tempo de expiração do refresh token (segundos)
+# Refresh token expiration time (seconds)
 refresh_expiration = 86400
 
-# Issuer do token
+# Token issuer
 issuer = "syros-platform"
 
-# Audience do token
+# Token audience
 audience = "syros-clients"
 
-# Configurações de clock skew
+# Clock skew settings
 clock_skew = 60
 ```
 
@@ -229,19 +229,19 @@ clock_skew = 60
 
 ```toml
 [security.api_keys]
-# Chave para criptografar API keys
+# Key for encrypting API keys
 encryption_key = "your-api-key-encryption-key"
 
-# Algoritmo de criptografia
+# Encryption algorithm
 encryption_algorithm = "AES-256-GCM"
 
-# Prefixo para API keys
+# API key prefix
 prefix = "sk_"
 
-# Tamanho da API key
+# API key length
 key_length = 32
 
-# Tempo de expiração (segundos, 0 = nunca expira)
+# Expiration time (seconds, 0 = never expires)
 expiration = 0
 ```
 
@@ -249,22 +249,22 @@ expiration = 0
 
 ```toml
 [security.cors]
-# Origins permitidos
+# Allowed origins
 origins = ["*"]
 
-# Métodos permitidos
+# Allowed methods
 methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 
-# Headers permitidos
+# Allowed headers
 headers = ["Content-Type", "Authorization", "X-API-Key"]
 
-# Headers expostos
+# Exposed headers
 expose_headers = ["X-Total-Count", "X-Page-Size"]
 
-# Credenciais permitidas
+# Allow credentials
 allow_credentials = true
 
-# Tempo de cache do preflight (segundos)
+# Preflight cache time (seconds)
 max_age = 86400
 ```
 
@@ -272,25 +272,25 @@ max_age = 86400
 
 ```toml
 [security.rate_limiting]
-# Habilitar rate limiting
+# Enable rate limiting
 enabled = true
 
-# Número de requisições por janela
+# Number of requests per window
 requests_per_window = 1000
 
-# Tamanho da janela (segundos)
+# Window size (seconds)
 window_size = 3600
 
-# Estratégia de rate limiting
+# Rate limiting strategy
 strategy = "sliding_window"  # sliding_window, fixed_window, token_bucket
 
-# Headers de resposta
+# Response headers
 include_headers = true
 
-# Configurações por IP
+# Per-IP limits
 per_ip_limits = true
 
-# Configurações por usuário
+# Per-user limits
 per_user_limits = true
 ```
 
@@ -298,19 +298,19 @@ per_user_limits = true
 
 ```toml
 [security.rbac]
-# Habilitar RBAC
+# Enable RBAC
 enabled = true
 
-# Cache de permissões
+# Permission cache
 cache_permissions = true
 
-# TTL do cache de permissões (segundos)
+# Permission cache TTL (seconds)
 cache_ttl = 300
 
-# Configurações de roles padrão
+# Default roles
 default_roles = ["guest", "user", "admin"]
 
-# Configurações de permissões padrão
+# Default permissions
 default_permissions = [
     "locks:read",
     "locks:write",
@@ -323,67 +323,67 @@ default_permissions = [
 ]
 ```
 
-## Configuração de Logging
+## Logging Configuration
 
-### Configurações Básicas
+### Basic Settings
 
 ```toml
 [logging]
-# Nível de log
+# Log level
 level = "info"  # trace, debug, info, warn, error
 
-# Formato de log
+# Log format
 format = "json"  # json, text, pretty
 
-# Output do log
+# Log output
 output = "stdout"  # stdout, stderr, file
 
-# Arquivo de log (se output = "file")
+# Log file (if output = "file")
 file_path = "/var/log/syros-platform.log"
 
-# Rotação de logs
+# Log rotation
 rotation = "daily"  # daily, hourly, never
 
-# Máximo de arquivos de log
+# Maximum log files
 max_files = 7
 
-# Tamanho máximo do arquivo (bytes)
+# Maximum file size (bytes)
 max_file_size = 10485760
 ```
 
-### Configurações Avançadas
+### Advanced Settings
 
 ```toml
 [logging.advanced]
-# Incluir timestamp
+# Include timestamp
 include_timestamp = true
 
-# Formato do timestamp
+# Timestamp format
 timestamp_format = "%Y-%m-%dT%H:%M:%S%.3fZ"
 
-# Incluir thread ID
+# Include thread ID
 include_thread_id = false
 
-# Incluir span ID
+# Include span ID
 include_span_id = true
 
-# Incluir trace ID
+# Include trace ID
 include_trace_id = true
 
-# Configurações de filtro
+# Filter settings
 filter_modules = ["syros_platform"]
 exclude_modules = ["tokio", "hyper"]
 
-# Configurações de cor
+# Color settings
 color_output = true
 color_stderr = false
 ```
 
-### Configurações por Componente
+### Component Settings
 
 ```toml
 [logging.components]
-# Nível de log por componente
+# Log level per component
 lock_manager = "debug"
 saga_orchestrator = "info"
 event_store = "info"
@@ -394,31 +394,31 @@ websocket_api = "info"
 graphql_api = "info"
 ```
 
-## Configuração de Observabilidade
+## Observability Configuration
 
-### Métricas
+### Metrics
 
 ```toml
 [observability.metrics]
-# Habilitar métricas
+# Enable metrics
 enabled = true
 
-# Porta do servidor de métricas
+# Metrics server port
 port = 9090
 
-# Path do endpoint de métricas
+# Metrics endpoint path
 path = "/metrics"
 
-# Configurações de coleta
+# Collection settings
 collect_interval = 15
 
-# Configurações de retenção
+# Retention settings
 retention_days = 30
 
-# Configurações de agregação
+# Aggregation settings
 aggregation_interval = 60
 
-# Configurações de labels
+# Label settings
 include_labels = true
 label_whitelist = ["method", "endpoint", "status"]
 ```
@@ -427,23 +427,23 @@ label_whitelist = ["method", "endpoint", "status"]
 
 ```toml
 [observability.tracing]
-# Habilitar tracing
+# Enable tracing
 enabled = true
 
-# Endpoint do Jaeger
+# Jaeger endpoint
 jaeger_endpoint = "http://localhost:14268/api/traces"
 
-# Nome do serviço
+# Service name
 service_name = "syros-platform"
 
-# Configurações de sampling
+# Sampling settings
 sampling_rate = 0.1
 
-# Configurações de batch
+# Batch settings
 batch_size = 100
 batch_timeout = 5
 
-# Configurações de tags
+# Tag settings
 tags = {
     "environment" = "production"
     "version" = "1.0.0"
@@ -454,63 +454,63 @@ tags = {
 
 ```toml
 [observability.health]
-# Habilitar health checks
+# Enable health checks
 enabled = true
 
-# Configurações de readiness
+# Readiness settings
 readiness_check = true
 readiness_timeout = 30
 
-# Configurações de liveness
+# Liveness settings
 liveness_check = true
 liveness_timeout = 30
 
-# Configurações de startup
+# Startup settings
 startup_check = true
 startup_timeout = 60
 
-# Configurações de dependências
+# Dependencies settings
 check_dependencies = true
 dependency_timeout = 10
 ```
 
-## Configuração de Service Discovery
+## Service Discovery Configuration
 
 ### Consul
 
 ```toml
 [service_discovery.consul]
-# Habilitar service discovery
+# Enable service discovery
 enabled = true
 
-# URL do Consul
+# Consul URL
 url = "http://localhost:8500"
 
-# Nome do serviço
+# Service name
 service_name = "syros-platform"
 
-# ID do serviço
+# Service ID
 service_id = "syros-platform-1"
 
-# Endereço do serviço
+# Service address
 service_address = "127.0.0.1"
 
-# Porta do serviço
+# Service port
 service_port = 8080
 
-# Tags do serviço
+# Service tags
 tags = ["api", "grpc", "websocket"]
 
-# Configurações de health check
+# Health check settings
 health_check_interval = 30
 health_check_timeout = 10
 health_check_path = "/health"
 
-# Configurações de retry
+# Retry settings
 max_retries = 3
 retry_delay = 1000
 
-# Configurações de TLS
+# TLS settings
 tls_enabled = false
 tls_cert = "/path/to/cert.pem"
 tls_key = "/path/to/key.pem"
@@ -521,72 +521,72 @@ tls_ca = "/path/to/ca.pem"
 
 ```toml
 [service_discovery.etcd]
-# Habilitar service discovery
+# Enable service discovery
 enabled = false
 
-# URLs dos nós etcd
+# etcd node URLs
 endpoints = ["http://localhost:2379"]
 
-# Prefixo para chaves
+# Key prefix
 key_prefix = "/syros/services/"
 
-# TTL do registro (segundos)
+# Registration TTL (seconds)
 ttl = 30
 
-# Configurações de retry
+# Retry settings
 max_retries = 3
 retry_delay = 1000
 ```
 
-## Configuração de Desenvolvimento
+## Development Configuration
 
-### Configurações de Debug
+### Debug Settings
 
 ```toml
 [development]
-# Modo debug
+# Debug mode
 debug = false
 
-# Logs verbosos
+# Verbose logs
 verbose = false
 
-# Configurações de hot reload
+# Hot reload settings
 hot_reload = false
 watch_files = ["src/", "config/"]
 
-# Configurações de profiling
+# Profiling settings
 profiling = false
 profile_output = "profile.prof"
 
-# Configurações de testing
+# Testing settings
 test_mode = false
 mock_external_services = false
 ```
 
-### Configurações de Teste
+### Test Settings
 
 ```toml
 [testing]
-# Configurações de banco de dados de teste
+# Test database settings
 test_database_url = "postgres://localhost:5432/syros_test"
 
-# Configurações de Redis de teste
+# Test Redis settings
 test_redis_url = "redis://localhost:6379/1"
 
-# Configurações de timeout
+# Timeout settings
 test_timeout = 30
 
-# Configurações de cleanup
+# Cleanup settings
 cleanup_after_tests = true
 cleanup_interval = 60
 ```
 
-## Variáveis de Ambiente
+## Environment Variables
 
-### Mapeamento de Variáveis
+### Variable Mapping
 
 ```bash
-# Servidor
+# Server
 export SYROS_SERVER_PORT=8080
 export SYROS_SERVER_GRPC_PORT=9090
 export SYROS_SERVER_WEBSOCKET_PORT=8081
@@ -597,7 +597,7 @@ export SYROS_REDIS_URL=redis://localhost:6379
 export SYROS_POSTGRES_URL=postgres://localhost:5432/syros
 export SYROS_ETCD_ENDPOINTS=http://localhost:2379
 
-# Segurança
+# Security
 export SYROS_JWT_SECRET=your-jwt-secret
 export SYROS_API_KEY_ENCRYPTION_KEY=your-api-key-encryption-key
 
@@ -612,24 +612,24 @@ export SYROS_SERVICE_NAME=syros-platform
 export SYROS_SERVICE_ID=syros-platform-1
 ```
 
-### Configuração por Ambiente
+### Environment-specific Configuration
 
 ```bash
-# Desenvolvimento
+# Development
 export SYROS_ENV=development
 export SYROS_LOG_LEVEL=debug
 export SYROS_DEBUG=true
 
-# Produção
+# Production
 export SYROS_ENV=production
 export SYROS_LOG_LEVEL=info
 export SYROS_DEBUG=false
 export SYROS_TLS_ENABLED=true
 ```
 
-## Exemplos de Configuração
+## Configuration Examples
 
-### Desenvolvimento Local
+### Local Development
 
 ```toml
 [server]
@@ -654,7 +654,7 @@ debug = true
 verbose = true
 ```
 
-### Produção
+### Production
 
 ```toml
 [server]
@@ -719,4 +719,4 @@ data:
 
 ---
 
-**Próximo**: [Deployment](deployment.md) | [Observabilidade](observability.md) | [FAQ](faq.md)
+**Next**: [Deployment](deployment.md) | [Observability](observability.md) | [FAQ](faq.md)

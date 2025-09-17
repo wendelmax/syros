@@ -12,7 +12,7 @@ cargo run
 ```
 **Saída:**
 ```
-🚀 Syros Platform - Distributed Coordination Service
+🚀 Syros - Distributed Coordination Service
 📦 Versão: 1.0.0
 🌐 Servidor iniciado em http://0.0.0.0:8080
 ```
@@ -23,12 +23,12 @@ cargo run -- --verbose
 ```
 **Saída:**
 ```
-🚀 Syros Platform - Distributed Coordination Service
+🚀 Syros - Distributed Coordination Service
 📦 Versão: 1.0.0
 🔧 Ambiente: Desenvolvimento
 🔧 Modo: Verbose
 🔧 Configuração: config/default.toml
-🚀 Iniciando Syros Platform...
+🚀 Iniciando Syros...
 📋 Configuração carregada:
    - Servidor: 0.0.0.0:8080
    - gRPC: 0.0.0.0:9090
@@ -56,7 +56,7 @@ cargo run -- info
 ```
 **Saída:**
 ```
-🚀 Syros Platform - Distributed Coordination Service
+🚀 Syros - Distributed Coordination Service
 📦 Versão: 1.0.0
 🔧 Ambiente: Desenvolvimento
 🔧 Rust: Unknown
@@ -113,4 +113,4 @@ cargo run -- --verbose --config production.toml
 - **Modo Quiet**: Apenas mensagens críticas
 - **Comandos**: Funcionalidades específicas sem iniciar servidor
 
-Isso torna o Syros Platform muito mais flexível para diferentes ambientes e casos de uso!
+Isso torna o Syros muito mais flexível para diferentes ambientes e casos de uso!

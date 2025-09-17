@@ -1,7 +1,7 @@
 {
   "name": "syros-sdk",
   "version": "1.0.0",
-  "description": "Syros Platform Node.js SDK - Distributed Coordination Service",
+  "description": "Syros Node.js SDK - Distributed Coordination Service",
   "main": "syros-sdk.js",
   "types": "syros-sdk.d.ts",
   "files": [

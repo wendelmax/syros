@@ -1,6 +1,6 @@
 //! Basic API handlers for core functionality.
 //!
-//! This module provides basic HTTP handlers for the core Syros Platform
+//! This module provides basic HTTP handlers for the core Syros
 //! functionality including locks, sagas, events, and caching.
 
 use crate::api::rest::ApiState;

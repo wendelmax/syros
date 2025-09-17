@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Teste das métricas da Syros Platform
+Teste das métricas da Syros
 """
 
 import asyncio
@@ -11,7 +11,7 @@ import random
 
 async def test_metrics():
     """Testa o endpoint de métricas"""
-    print("🧪 Testando métricas da Syros Platform...")
+    print("🧪 Testando métricas da Syros...")
     
     base_url = "http://localhost:8080"
     
@@ -121,7 +121,7 @@ async def test_websocket_metrics():
 
 async def main():
     """Executa todos os testes de métricas"""
-    print("🚀 Syros Platform - Teste de Métricas")
+    print("🚀 Syros - Teste de Métricas")
     print("=" * 50)
     
     await test_metrics()

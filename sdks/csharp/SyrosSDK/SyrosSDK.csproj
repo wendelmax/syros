@@ -9,15 +9,15 @@
     <Version>1.0.0</Version>
     <Authors>Syros Team</Authors>
     <Company>Syros</Company>
-    <Product>Syros Platform C# SDK</Product>
-    <Description>C# SDK for Syros Platform - Distributed Coordination Service</Description>
+    <Product>Syros C# SDK</Product>
+    <Description>C# SDK for Syros - Distributed Coordination Service</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://syros.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/syros/platform</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>syros;distributed-systems;coordination;locks;sagas;events;cache;microservices;rust;csharp;dotnet</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>Initial release of Syros Platform C# SDK</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial release of Syros C# SDK</PackageReleaseNotes>
     <Copyright>Copyright © Syros 2024</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>SyrosSDK</PackageId>

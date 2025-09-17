@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Exemplo básico de uso do Syros Platform para locks distribuídos
+Exemplo básico de uso do Syros para locks distribuídos
 """
 
 import asyncio
@@ -81,7 +81,7 @@ class SyrosLockClient:
 
 async def exemplo_basico():
     """Exemplo básico de uso de locks"""
-    print("🔒 Exemplo básico de locks distribuídos com Syros Platform")
+    print("🔒 Exemplo básico de locks distribuídos com Syros")
     
     async with SyrosLockClient() as client:
         resource_key = "recurso_critico_001"
@@ -168,7 +168,7 @@ async def exemplo_concorrencia():
 
 async def main():
     """Função principal"""
-    print("🚀 Exemplos de uso do Syros Platform - Locks Distribuídos")
+    print("🚀 Exemplos de uso do Syros - Locks Distribuídos")
     print("=" * 60)
     
     try:

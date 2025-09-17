@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Teste das novas APIs da Syros Platform
+Teste das novas APIs da Syros
 """
 
 import requests
@@ -167,7 +167,7 @@ def test_health():
 
 def main():
     """Executa todos os testes"""
-    print("🚀 Syros Platform - Teste das Novas APIs")
+    print("🚀 Syros - Teste das Novas APIs")
     print("=" * 50)
     
     # Verificar se o servidor está rodando

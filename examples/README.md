@@ -1,6 +1,6 @@
-# Exemplos do Syros Platform
+# Exemplos do Syros
 
-Esta pasta contém exemplos práticos demonstrando como usar o Syros Platform em diferentes cenários.
+Esta pasta contém exemplos práticos demonstrando como usar o Syros em diferentes cenários.
 
 ## 📁 Estrutura
 
@@ -44,7 +44,7 @@ python main.py
 
 ## 📋 Pré-requisitos
 
-Todos os exemplos assumem que o Syros Platform está rodando:
+Todos os exemplos assumem que o Syros está rodando:
 
 ```bash
 # Via Docker Compose (recomendado)
@@ -66,7 +66,7 @@ docker-compose up -d
 ### Variáveis de Ambiente
 
 ```bash
-# URL base do Syros Platform (padrão)
+# URL base do Syros (padrão)
 export SYROS_BASE_URL=http://localhost:8080
 
 # Para exemplos gRPC
@@ -148,7 +148,7 @@ examples/
 
 Se encontrar problemas:
 
-1. Verifique se o Syros Platform está rodando
+1. Verifique se o Syros está rodando
 2. Consulte os logs: `docker-compose logs syros-platform`
 3. Verifique as portas: `netstat -tlnp | grep 8080`
 4. Abra uma issue no GitHub com detalhes do erro

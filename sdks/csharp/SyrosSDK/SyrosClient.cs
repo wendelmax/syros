@@ -11,9 +11,9 @@ using Microsoft.Extensions.Logging;
 namespace SyrosSDK
 {
     /// <summary>
-    /// Syros Platform C# SDK
+    /// Syros C# SDK
     /// 
-    /// Provides a C# interface to interact with Syros Platform,
+    /// Provides a C# interface to interact with Syros,
     /// including REST APIs and WebSocket communication.
     /// </summary>
     public class SyrosClient : IDisposable

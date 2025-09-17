@@ -1,12 +1,12 @@
-//! Syros Platform - Distributed Coordination Service
+//! Syros - Distributed Coordination Service
 //!
-//! This is the main entry point for the Syros Platform, a distributed coordination
+//! This is the main entry point for the Syros, a distributed coordination
 //! service that provides distributed locks, saga orchestration, event sourcing,
 //! and caching capabilities for microservices architectures.
 
 use syros_platform::{cli, server};
 
-/// Main entry point for the Syros Platform application.
+/// Main entry point for the Syros application.
 ///
 /// This function parses command line arguments and executes the appropriate
 /// command based on the user's input. It supports starting the server with
@@ -30,7 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             interface,
         }) => {
             if !cli.quiet {
-                println!("Syros Platform - Distributed Coordination Service");
+                println!("Syros - Distributed Coordination Service");
                 println!("Version: {}", env!("CARGO_PKG_VERSION"));
 
                 if cli.verbose {
@@ -95,7 +95,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         Some(cli::Commands::Info) => {
-            println!("Syros Platform - Distributed Coordination Service");
+            println!("Syros - Distributed Coordination Service");
             println!("Version: {}", env!("CARGO_PKG_VERSION"));
             println!(
                 "Environment: {}",
@@ -116,7 +116,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         None => {
             if !cli.quiet {
-                println!("Syros Platform - Distributed Coordination Service");
+                println!("Syros - Distributed Coordination Service");
                 println!("Version: {}", env!("CARGO_PKG_VERSION"));
 
                 if cli.verbose {

@@ -1,6 +1,6 @@
-# Arquitetura da Plataforma
+# Platform Architecture
 
-## Big Picture - Visão Geral da Arquitetura
+## Big Picture - Architecture Overview
 
 ```mermaid
 ---
@@ -130,36 +130,36 @@ flowchart TB
     classDef sdkLayer fill:#fff8e1
 ```
 
-## Fluxo de Dados e Interações
+## Data Flow and Interactions
 
 ```mermaid
 sequenceDiagram
-    participant Client as Cliente
+    participant Client as Client
     participant API as API Gateway
     participant Auth as Auth Middleware
     participant Core as Core Services
     participant Storage as Storage Layer
     participant Obs as Observability
 
-    Note over Client,Obs: Fluxo de Requisição Típica
+    Note over Client,Obs: Typical Request Flow
 
-    Client->>API: 1. Requisição HTTP/gRPC/WebSocket
-    API->>Auth: 2. Validação de Autenticação
-    Auth->>Auth: 3. Verificar JWT/API Key
-    Auth-->>API: 4. Token Válido
+    Client->>API: 1. HTTP/gRPC/WebSocket Request
+    API->>Auth: 2. Authentication Validation
+    Auth->>Auth: 3. Verify JWT/API Key
+    Auth-->>API: 4. Valid Token
     
-    API->>Core: 5. Processar Requisição
-    Core->>Storage: 6. Acessar Dados
-    Storage-->>Core: 7. Retornar Dados
-    Core-->>API: 8. Resposta Processada
+    API->>Core: 5. Process Request
+    Core->>Storage: 6. Access Data
+    Storage-->>Core: 7. Return Data
+    Core-->>API: 8. Processed Response
     
-    API->>Obs: 9. Registrar Métricas
-    API-->>Client: 10. Resposta Final
+    API->>Obs: 9. Record Metrics
+    API-->>Client: 10. Final Response
 
-    Note over Client,Obs: Exemplo: Aquisição de Lock
+    Note over Client,Obs: Example: Lock Acquisition
 
     Client->>API: POST /api/v1/locks
-    API->>Auth: Validar Token
+    API->>Auth: Validate Token
     Auth-->>API: Token OK
     API->>Core: LockManager.acquire_lock()
     Core->>Storage: Redis SET lock_key
@@ -168,10 +168,10 @@ sequenceDiagram
     API->>Obs: Record Lock Metrics
     API-->>Client: 201 Created + Lock ID
 
-    Note over Client,Obs: Exemplo: WebSocket Event
+    Note over Client,Obs: Example: WebSocket Event
 
     Client->>API: WebSocket Connect
-    API->>Auth: Validar Token
+    API->>Auth: Validate Token
     Auth-->>API: Token OK
     API->>Core: Subscribe to Events
     Core->>Storage: Monitor Changes
@@ -180,7 +180,7 @@ sequenceDiagram
     API-->>Client: WebSocket Message
 ```
 
-## Padrões de Arquitetura Implementados
+## Implemented Architecture Patterns
 
 ```mermaid
 graph LR
@@ -240,146 +240,146 @@ graph LR
     CORS --> HELM
 ```
 
-## Componentes Principais
+## Main Components
 
 ### **API Gateway Layer**
-- **REST API**: Interface HTTP para integração web
-- **gRPC API**: Interface de alta performance para microserviços
-- **WebSocket API**: Comunicação em tempo real
-- **GraphQL API**: Interface flexível para consultas complexas
+- **REST API**: HTTP interface for web integration
+- **gRPC API**: High-performance interface for microservices
+- **WebSocket API**: Real-time communication
+- **GraphQL API**: Flexible interface for complex queries
 
 ### **Core Services Layer**
-- **Lock Manager**: Gerenciamento de locks distribuídos
-- **Saga Orchestrator**: Orquestração de transações distribuídas
-- **Event Store**: Armazenamento e replay de eventos
-- **Cache Manager**: Cache distribuído com TTL
-- **Service Discovery**: Descoberta automática de serviços
-- **RBAC Manager**: Controle de acesso baseado em roles
+- **Lock Manager**: Distributed lock management
+- **Saga Orchestrator**: Distributed transaction orchestration
+- **Event Store**: Event storage and replay
+- **Cache Manager**: Distributed cache with TTL
+- **Service Discovery**: Automatic service discovery
+- **RBAC Manager**: Role-based access control
 
 ### **Middleware Layer**
-- **Auth Middleware**: Autenticação JWT e API Keys
-- **Rate Limiting**: Controle de taxa de requisições
-- **CORS Handler**: Suporte a requisições cross-origin
-- **Metrics Collector**: Coleta de métricas para observabilidade
+- **Auth Middleware**: JWT and API Key authentication
+- **Rate Limiting**: Request rate control
+- **CORS Handler**: Cross-origin request support
+- **Metrics Collector**: Metrics collection for observability
 
 ### **Storage Layer**
-- **Redis**: Armazenamento de locks e cache
-- **PostgreSQL**: Persistência de eventos e metadados
-- **etcd**: Configuração distribuída
+- **Redis**: Lock and cache storage
+- **PostgreSQL**: Event and metadata persistence
+- **etcd**: Distributed configuration
 
 ### **Observability Layer**
-- **Prometheus**: Coleta e armazenamento de métricas
-- **Grafana**: Dashboards e visualizações
-- **Jaeger**: Rastreamento distribuído
-- **Structured Logging**: Logs estruturados em JSON
+- **Prometheus**: Metrics collection and storage
+- **Grafana**: Dashboards and visualizations
+- **Jaeger**: Distributed tracing
+- **Structured Logging**: JSON structured logs
 
 ### **Infrastructure Layer**
-- **Docker**: Containerização da aplicação
-- **Kubernetes**: Orquestração de containers
-- **Helm Charts**: Gerenciamento de deployments
-- **GitHub Actions**: Pipeline de CI/CD
+- **Docker**: Application containerization
+- **Kubernetes**: Container orchestration
+- **Helm Charts**: Deployment management
+- **GitHub Actions**: CI/CD pipeline
 
 ### **SDK Layer**
-- **Python SDK**: Para aplicações Python
-- **Node.js SDK**: Para aplicações JavaScript/TypeScript
-- **Java SDK**: Para aplicações Java
-- **C# SDK**: Para aplicações .NET
-- **Go SDK**: Para aplicações Go
+- **Python SDK**: For Python applications
+- **Node.js SDK**: For JavaScript/TypeScript applications
+- **Java SDK**: For Java applications
+- **C# SDK**: For .NET applications
+- **Go SDK**: For Go applications
 
-## Decisões Arquiteturais
+## Architectural Decisions
 
-### Por que Rust?
-- **Performance**: Zero-cost abstractions e memory safety
-- **Concorrência**: Async/await nativo com tokio
-- **Confiabilidade**: Prevenção de bugs em tempo de compilação
-- **Ecosistema**: Crate ecosystem maduro para sistemas distribuídos
+### Why Rust?
+- **Performance**: Zero-cost abstractions and memory safety
+- **Concurrency**: Native async/await with tokio
+- **Reliability**: Compile-time bug prevention
+- **Ecosystem**: Mature crate ecosystem for distributed systems
 
-### Por que Múltiplas APIs?
-- **REST**: Simplicidade e compatibilidade universal
-- **gRPC**: Performance e type safety para microserviços
-- **WebSocket**: Comunicação em tempo real
-- **GraphQL**: Flexibilidade para frontends complexos
+### Why Multiple APIs?
+- **REST**: Simplicity and universal compatibility
+- **gRPC**: Performance and type safety for microservices
+- **WebSocket**: Real-time communication
+- **GraphQL**: Flexibility for complex frontends
 
-### Por que Event Sourcing?
-- **Auditoria**: Histórico completo de mudanças
-- **Replay**: Capacidade de reconstruir estado
-- **Debugging**: Rastreabilidade de problemas
-- **Integração**: Eventos como fonte de verdade
+### Why Event Sourcing?
+- **Audit**: Complete history of changes
+- **Replay**: Ability to rebuild state
+- **Debugging**: Problem traceability
+- **Integration**: Events as source of truth
 
-### Por que Saga Pattern?
-- **Transações Distribuídas**: Coordenação entre serviços
-- **Compensação**: Rollback automático em caso de falha
-- **Resiliência**: Retry policies e circuit breakers
-- **Observabilidade**: Visibilidade do estado das transações
+### Why Saga Pattern?
+- **Distributed Transactions**: Coordination between services
+- **Compensation**: Automatic rollback on failure
+- **Resilience**: Retry policies and circuit breakers
+- **Observability**: Transaction state visibility
 
-## Escalabilidade
+## Scalability
 
 ### Horizontal Scaling
-- **Stateless Services**: Serviços sem estado interno
-- **Load Balancing**: Distribuição de carga automática
-- **Service Discovery**: Descoberta automática de instâncias
-- **Data Partitioning**: Particionamento de dados por chave
+- **Stateless Services**: Services without internal state
+- **Load Balancing**: Automatic load distribution
+- **Service Discovery**: Automatic instance discovery
+- **Data Partitioning**: Data partitioning by key
 
 ### Vertical Scaling
-- **Async Processing**: Processamento assíncrono não-bloqueante
-- **Connection Pooling**: Pool de conexões otimizado
-- **Memory Management**: Gerenciamento eficiente de memória
-- **CPU Optimization**: Otimizações específicas para CPU
+- **Async Processing**: Non-blocking async processing
+- **Connection Pooling**: Optimized connection pool
+- **Memory Management**: Efficient memory management
+- **CPU Optimization**: CPU-specific optimizations
 
-## Segurança
+## Security
 
-### Autenticação
-- **JWT**: Tokens stateless e seguros
-- **API Keys**: Autenticação service-to-service
-- **OAuth2**: Integração com provedores externos
-- **mTLS**: Autenticação mútua para comunicação interna
+### Authentication
+- **JWT**: Stateless and secure tokens
+- **API Keys**: Service-to-service authentication
+- **OAuth2**: Integration with external providers
+- **mTLS**: Mutual authentication for internal communication
 
-### Autorização
-- **RBAC**: Controle baseado em roles
-- **Permissions**: Permissões granulares
-- **Resource-based**: Autorização por recurso
-- **Time-based**: Expiração automática de permissões
+### Authorization
+- **RBAC**: Role-based control
+- **Permissions**: Granular permissions
+- **Resource-based**: Per-resource authorization
+- **Time-based**: Automatic permission expiration
 
-### Criptografia
-- **TLS**: Comunicação criptografada
-- **Data at Rest**: Criptografia de dados armazenados
-- **Key Management**: Gerenciamento seguro de chaves
-- **Hashing**: Hash seguro de senhas e tokens
+### Encryption
+- **TLS**: Encrypted communication
+- **Data at Rest**: Stored data encryption
+- **Key Management**: Secure key management
+- **Hashing**: Secure password and token hashing
 
-## Monitoramento
+## Monitoring
 
-### Métricas
-- **Business Metrics**: Métricas de negócio
-- **Technical Metrics**: Métricas técnicas
-- **Custom Metrics**: Métricas personalizadas
-- **Alerting**: Alertas baseados em métricas
+### Metrics
+- **Business Metrics**: Business metrics
+- **Technical Metrics**: Technical metrics
+- **Custom Metrics**: Custom metrics
+- **Alerting**: Metrics-based alerts
 
 ### Logs
-- **Structured Logging**: Logs em formato JSON
-- **Correlation IDs**: Rastreamento de requisições
-- **Log Levels**: Níveis de log configuráveis
-- **Log Aggregation**: Agregação centralizada
+- **Structured Logging**: JSON format logs
+- **Correlation IDs**: Request tracking
+- **Log Levels**: Configurable log levels
+- **Log Aggregation**: Centralized aggregation
 
 ### Tracing
-- **Distributed Tracing**: Rastreamento distribuído
-- **Span Correlation**: Correlação de spans
-- **Performance Analysis**: Análise de performance
-- **Error Tracking**: Rastreamento de erros
+- **Distributed Tracing**: Distributed tracking
+- **Span Correlation**: Span correlation
+- **Performance Analysis**: Performance analysis
+- **Error Tracking**: Error tracking
 
-## Resiliência
+## Resilience
 
 ### Fault Tolerance
-- **Circuit Breakers**: Proteção contra falhas em cascata
-- **Retry Policies**: Políticas de retry configuráveis
-- **Timeout Handling**: Tratamento de timeouts
-- **Graceful Degradation**: Degradação graciosa
+- **Circuit Breakers**: Protection against cascade failures
+- **Retry Policies**: Configurable retry policies
+- **Timeout Handling**: Timeout handling
+- **Graceful Degradation**: Graceful degradation
 
 ### Disaster Recovery
-- **Backup Strategy**: Estratégia de backup
-- **Data Replication**: Replicação de dados
-- **Failover**: Failover automático
-- **Recovery Procedures**: Procedimentos de recuperação
+- **Backup Strategy**: Backup strategy
+- **Data Replication**: Data replication
+- **Failover**: Automatic failover
+- **Recovery Procedures**: Recovery procedures
 
 ---
 
-**Próximo**: [Configuração](configuration.md) | [Deployment](deployment.md) | [Observabilidade](observability.md)
+**Next**: [Configuration](configuration.md) | [Deployment](deployment.md) | [Observability](observability.md)

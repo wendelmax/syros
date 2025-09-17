@@ -1,6 +1,6 @@
 """
-Syros Platform Python SDK
-SDK oficial para integração com a Syros Platform
+Syros Python SDK
+SDK oficial para integração com a Syros
 """
 
 import asyncio
@@ -88,7 +88,7 @@ class CacheResponse:
 
 
 class SyrosClient:
-    """Cliente principal para a Syros Platform"""
+    """Cliente principal para a Syros"""
     
     def __init__(self, endpoint: str = "http://localhost:8080", api_key: Optional[str] = None):
         self.endpoint = endpoint.rstrip('/')

@@ -1,6 +1,6 @@
-# Syros Platform Node.js SDK
+# Syros Node.js SDK
 
-SDK oficial para integração com a Syros Platform em Node.js.
+SDK oficial para integração com a Syros em Node.js.
 
 ## Instalação
 

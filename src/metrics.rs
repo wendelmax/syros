@@ -1,7 +1,7 @@
 //! Metrics collection and monitoring.
 //!
 //! This module provides metrics collection using Prometheus for monitoring
-//! the Syros Platform's performance and health.
+//! the Syros's performance and health.
 
 use prometheus::{
     Counter, CounterVec, Encoder, Gauge, Histogram, HistogramOpts, HistogramVec, Opts, Registry,

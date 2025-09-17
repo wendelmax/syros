@@ -2,7 +2,7 @@
 
 # Default target
 help:
-	@echo "Syros Platform - Makefile Commands"
+	@echo "Syros - Makefile Commands"
 	@echo "=================================="
 	@echo "Development:"
 	@echo "  dev         - Start development environment"
@@ -31,10 +31,10 @@ dev:
 	@echo "🚀 Starting development environment..."
 	docker-compose up -d redis etcd postgres
 	@echo "✅ Infrastructure started"
-	@echo "🔧 Run 'cargo run' to start Syros Platform"
+	@echo "🔧 Run 'cargo run' to start Syros"
 
 build:
-	@echo "🔨 Building Syros Platform..."
+	@echo "🔨 Building Syros..."
 	cargo build
 
 test:
@@ -66,9 +66,9 @@ docker:
 	docker build -t syros-platform .
 
 run:
-	@echo "🚀 Starting Syros Platform with Docker Compose..."
+	@echo "🚀 Starting Syros with Docker Compose..."
 	docker-compose up -d
-	@echo "✅ Syros Platform started!"
+	@echo "✅ Syros started!"
 	@echo ""
 	@echo "🌐 Services available at:"
 	@echo "  - REST API: http://localhost:8080"
@@ -78,7 +78,7 @@ run:
 	@echo "  - Grafana: http://localhost:3000 (admin/admin)"
 
 stop:
-	@echo "🛑 Stopping Syros Platform..."
+	@echo "🛑 Stopping Syros..."
 	docker-compose down
 
 # Documentation
@@ -156,6 +156,6 @@ ci: check bench
 
 # Quick start
 quick-start: setup build run
-	@echo "🎉 Syros Platform is running!"
+	@echo "🎉 Syros is running!"
 	@echo "📖 Check examples/ directory for usage examples"
 	@echo "📚 Documentation: cargo doc --open"

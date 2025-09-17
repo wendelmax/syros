@@ -1,6 +1,6 @@
-# Syros Platform Helm Chart
+# Syros Helm Chart
 
-This Helm chart deploys the Syros Platform - a distributed coordination service built in Rust.
+This Helm chart deploys the Syros - a distributed coordination service built in Rust.
 
 ## Prerequisites
 

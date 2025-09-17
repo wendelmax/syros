@@ -1,6 +1,6 @@
-//! gRPC API module for the Syros Platform.
+//! gRPC API module for the Syros.
 //!
-//! This module implements the gRPC service for the Syros Platform using Volo.
+//! This module implements the gRPC service for the Syros using Volo.
 //! It provides high-performance RPC endpoints for distributed locks, saga orchestration,
 //! event sourcing, and caching operations.
 
@@ -11,7 +11,7 @@ use std::sync::Arc;
 use volo::FastStr;
 use volo_grpc::{Request, Response, Status};
 
-/// gRPC service implementation for the Syros Platform.
+/// gRPC service implementation for the Syros.
 ///
 /// This struct holds references to all core components and implements
 /// the gRPC service trait for distributed coordination operations.
@@ -53,7 +53,7 @@ impl SyrosGrpcService {
     ///
     /// This method creates a new gRPC server instance and starts it on the
     /// provided address. The server will handle all gRPC requests for the
-    /// Syros Platform services.
+    /// Syros services.
     ///
     /// # Arguments
     ///
@@ -83,7 +83,7 @@ impl SyrosGrpcService {
     /// Demonstrates gRPC operations for testing purposes.
     ///
     /// This method performs a series of gRPC operations to demonstrate
-    /// the functionality of the Syros Platform services. It's primarily
+    /// the functionality of the Syros services. It's primarily
     /// used for testing and validation during development.
     ///
     /// # Returns

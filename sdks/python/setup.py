@@ -11,7 +11,7 @@ setup(
     version="1.0.0",
     author="Syros Team",
     author_email="team@syros.com",
-    description="Syros Platform Python SDK - Distributed Coordination Service",
+    description="Syros Python SDK - Distributed Coordination Service",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/syros/platform",

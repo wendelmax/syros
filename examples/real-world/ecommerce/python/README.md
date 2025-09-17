@@ -1,6 +1,6 @@
 # Exemplo Real: E-commerce com Saga Pattern
 
-Este exemplo demonstra como usar o Syros Platform para implementar o padrão Saga em um sistema de e-commerce real, orquestrando transações distribuídas para processamento de pedidos.
+Este exemplo demonstra como usar o Syros para implementar o padrão Saga em um sistema de e-commerce real, orquestrando transações distribuídas para processamento de pedidos.
 
 ## Cenário
 
@@ -24,7 +24,7 @@ Validar Pedido → Reservar Estoque → Processar Pagamento → Confirmar Estoqu
 ## Pré-requisitos
 
 - Python 3.8+
-- Syros Platform rodando (padrão: http://localhost:8080)
+- Syros rodando (padrão: http://localhost:8080)
 
 ## Instalação
 
@@ -66,7 +66,7 @@ python main.py
 ```
 🚀 Exemplo Real: E-commerce com Saga Pattern
 ============================================================
-Este exemplo demonstra como usar o Syros Platform para
+Este exemplo demonstra como usar o Syros para
 orquestrar transações distribuídas em um sistema de e-commerce
 
 🛒 Exemplo 1: Pedido processado com sucesso
@@ -150,7 +150,7 @@ orquestrar transações distribuídas em um sistema de e-commerce
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   E-commerce    │    │  Syros Platform │    │  Microservices  │
+│   E-commerce    │    │  Syros │    │  Microservices  │
 │     Client      │    │                 │    │                 │
 │                 │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
 │ • Criar Pedido  │───►│ │ Saga        │ │◄──►│ │ Order       │ │

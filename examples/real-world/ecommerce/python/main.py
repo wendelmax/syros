@@ -313,7 +313,7 @@ async def main():
     """Função principal"""
     print("🚀 Exemplo Real: E-commerce com Saga Pattern")
     print("=" * 60)
-    print("Este exemplo demonstra como usar o Syros Platform para")
+    print("Este exemplo demonstra como usar o Syros para")
     print("orquestrar transações distribuídas em um sistema de e-commerce")
     
     try:

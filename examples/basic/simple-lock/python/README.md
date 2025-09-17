@@ -1,11 +1,11 @@
 # Exemplo Básico: Locks Distribuídos com Python
 
-Este exemplo demonstra como usar o Syros Platform para implementar locks distribuídos em Python.
+Este exemplo demonstra como usar o Syros para implementar locks distribuídos em Python.
 
 ## Pré-requisitos
 
 - Python 3.8+
-- Syros Platform rodando (padrão: http://localhost:8080)
+- Syros rodando (padrão: http://localhost:8080)
 
 ## Instalação
 
@@ -36,10 +36,10 @@ python main.py
 ## Saída esperada
 
 ```
-🚀 Exemplos de uso do Syros Platform - Locks Distribuídos
+🚀 Exemplos de uso do Syros - Locks Distribuídos
 ============================================================
 
-🔒 Exemplo básico de locks distribuídos com Syros Platform
+🔒 Exemplo básico de locks distribuídos com Syros
 
 1. Verificando status inicial do lock 'recurso_critico_001'...
 Status: {

@@ -10,8 +10,8 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Syros Platform Java SDK</name>
-    <description>Java SDK for Syros Platform - Distributed Coordination Service</description>
+    <name>Syros Java SDK</name>
+    <description>Java SDK for Syros - Distributed Coordination Service</description>
     <url>https://syros.com</url>
     <inceptionYear>2024</inceptionYear>
 

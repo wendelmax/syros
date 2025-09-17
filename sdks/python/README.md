@@ -1,6 +1,6 @@
-# Syros Platform Python SDK
+# Syros Python SDK
 
-SDK oficial para integração com a Syros Platform em Python.
+SDK oficial para integração com a Syros em Python.
 
 ## Instalação
 

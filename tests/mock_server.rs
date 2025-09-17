@@ -1,6 +1,6 @@
 //! Mock server implementation for integration tests.
 //!
-//! This module provides mock implementations of the Syros Platform servers
+//! This module provides mock implementations of the Syros servers
 //! to enable testing without requiring actual server instances.
 
 use axum::{

@@ -1,39 +1,39 @@
-# Documentação Syros Platform
+# Syros Documentation
 
-Bem-vindo à documentação completa da Syros Platform! Esta pasta contém toda a documentação detalhada para usar a plataforma.
+Welcome to the complete Syros documentation! This folder contains all detailed documentation for using the platform.
 
-## Índice da Documentação
+## Documentation Index
 
-### [Guia de Início Rápido](getting-started.md)
-- Instalação e configuração
-- Primeiros passos
-- Exemplos básicos
+### [Quick Start Guide](getting-started.md)
+- Installation and setup
+- First steps
+- Basic examples
 
 ### [REST API](rest-api.md)
-- Autenticação e autorização
-- Gerenciamento de locks
-- Orquestração de sagas
+- Authentication and authorization
+- Lock management
+- Saga orchestration
 - Event Store
-- Cache distribuído
-- Exemplos práticos com curl
+- Distributed cache
+- Practical examples with curl
 
 ### [gRPC API](grpc-api.md)
-- Configuração de clientes
-- Exemplos em Python, Node.js, Java, C#, Go
+- Client configuration
+- Examples in Python, Node.js, Java, C#, Go
 - Protocol Buffers
-- Streaming e performance
+- Streaming and performance
 
 ### [WebSocket API](websocket-api.md)
-- Conexão e autenticação
-- Eventos em tempo real
-- Subscrições
-- Exemplos JavaScript
+- Connection and authentication
+- Real-time events
+- Subscriptions
+- JavaScript examples
 
 ### [GraphQL API](graphql-api.md)
-- Schema e tipos
-- Queries e mutations
+- Schema and types
+- Queries and mutations
 - Apollo Client
-- Exemplos práticos
+- Practical examples
 
 ### [SDKs](sdks.md)
 - Python SDK
@@ -41,73 +41,73 @@ Bem-vindo à documentação completa da Syros Platform! Esta pasta contém toda 
 - Java SDK
 - C# SDK
 - Go SDK
-- Exemplos de uso
+- Usage examples
 
-### [Observabilidade](observability.md)
-- Métricas Prometheus
+### [Observability](observability.md)
+- Prometheus metrics
 - Health checks
-- Logs estruturados
-- Dashboards Grafana
-- Tracing Jaeger
+- Structured logs
+- Grafana dashboards
+- Jaeger tracing
 
-### [Arquitetura](architecture.md)
-- Visão geral da arquitetura
-- Padrões implementados
-- Fluxo de dados
-- Diagramas Mermaid
+### [Architecture](architecture.md)
+- Architecture overview
+- Implemented patterns
+- Data flow
+- Mermaid diagrams
 
-### [Configuração](configuration.md)
-- Arquivos de configuração
-- Variáveis de ambiente
-- Configuração por ambiente
-- Exemplos de configuração
+### [Configuration](configuration.md)
+- Configuration files
+- Environment variables
+- Environment-specific configuration
+- Configuration examples
 
 ### [Deployment](deployment.md)
 - Docker
 - Kubernetes
 - Helm Charts
 - CI/CD
-- Produção
+- Production
 
-### [Testes](testing.md)
-- Testes unitários
-- Testes de integração
+### [Testing](testing.md)
+- Unit tests
+- Integration tests
 - Mock servers
-- Exemplos de teste
+- Test examples
 
 ### [FAQ](faq.md)
-- Perguntas frequentes
+- Frequently asked questions
 - Troubleshooting
-- Problemas comuns
-- Soluções
+- Common issues
+- Solutions
 
-## Como Usar Esta Documentação
+## How to Use This Documentation
 
-1. **Comece com o [Guia de Início Rápido](getting-started.md)** se você é novo na plataforma
-2. **Escolha a API que melhor se adequa ao seu caso de uso**:
-   - REST para integrações web simples
-   - gRPC para alta performance
-   - WebSocket para tempo real
-   - GraphQL para consultas flexíveis
-3. **Use os SDKs** para integração mais fácil em sua linguagem preferida
-4. **Configure a observabilidade** para monitorar sua aplicação
-5. **Consulte a FAQ** se tiver dúvidas
+1. **Start with the [Quick Start Guide](getting-started.md)** if you're new to the platform
+2. **Choose the API that best fits your use case**:
+   - REST for simple web integrations
+   - gRPC for high performance
+   - WebSocket for real-time
+   - GraphQL for flexible queries
+3. **Use the SDKs** for easier integration in your preferred language
+4. **Set up observability** to monitor your application
+5. **Check the FAQ** if you have questions
 
-## Links Úteis
+## Useful Links
 
-- [Repositório GitHub](https://github.com/syros/platform)
+- [GitHub Repository](https://github.com/wendelmax/syros)
 - [Changelog](../CHANGELOG.md)
 - [Deployment Guide](../DEPLOYMENT.md)
-- [Configuração Padrão](../config/default.toml)
+- [Default Configuration](../config/default.toml)
 
-## Contribuindo
+## Contributing
 
-Encontrou um erro na documentação? Tem uma sugestão de melhoria?
+Found an error in the documentation? Have a suggestion for improvement?
 
-1. Abra uma [issue](https://github.com/syros/platform/issues)
-2. Faça um [pull request](https://github.com/syros/platform/pulls)
-3. Entre em contato conosco
+1. Open an [issue](https://github.com/wendelmax/syros/issues)
+2. Make a [pull request](https://github.com/wendelmax/syros/pulls)
+3. Contact us
 
 ---
 
-**Última atualização**: 19 de setembro de 2025
+**Last updated**: September 19, 2025

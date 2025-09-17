@@ -1,6 +1,6 @@
-# Syros Platform C# SDK
+# Syros C# SDK
 
-Este SDK fornece uma interface C# para interagir com a Syros Platform, incluindo as APIs REST e WebSocket.
+Este SDK fornece uma interface C# para interagir com a Syros, incluindo as APIs REST e WebSocket.
 
 ## Instalação
 

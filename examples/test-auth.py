@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Teste da API de Autenticação da Syros Platform
+Teste da API de Autenticação da Syros
 """
 
 import requests
@@ -9,7 +9,7 @@ import time
 
 def test_auth_api():
     """Testa a API de autenticação"""
-    print("🔐 Syros Platform - Teste de Autenticação")
+    print("🔐 Syros - Teste de Autenticação")
     print("=" * 50)
     
     base_url = "http://localhost:8080"

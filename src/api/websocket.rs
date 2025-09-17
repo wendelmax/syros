@@ -65,7 +65,7 @@ async fn handle_socket(socket: WebSocket, state: Arc<WebSocketService>) {
     let welcome_msg = WebSocketMessage {
         r#type: "welcome".to_string(),
         data: serde_json::json!({
-            "message": "Conectado ao Syros Platform WebSocket",
+            "message": "Conectado ao Syros WebSocket",
             "version": env!("CARGO_PKG_VERSION")
         }),
         timestamp: chrono::Utc::now().to_rfc3339(),

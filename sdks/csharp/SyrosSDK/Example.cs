@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 namespace SyrosSDK
 {
     /// <summary>
-    /// Example usage of Syros Platform C# SDK
+    /// Example usage of Syros C# SDK
     /// </summary>
     class Example
     {
@@ -16,7 +16,7 @@ namespace SyrosSDK
 
             try
             {
-                Console.WriteLine("🚀 Syros Platform C# SDK Example");
+                Console.WriteLine("🚀 Syros C# SDK Example");
                 Console.WriteLine(new string('=', 50));
 
                 // Test REST API

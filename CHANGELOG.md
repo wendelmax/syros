@@ -1,151 +1,151 @@
-# Changelog - Syros Platform
+# Changelog - Syros
 
-Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+All notable changes to this project will be documented in this file.
 
 ## [1.0.1] - 2025-09-19
 
-### 🧪 Melhorias de Testes
+### 🧪 Test Improvements
 
-#### ✨ Funcionalidades Adicionadas
+#### ✨ Added Features
 
-**Mock Server para Testes**
-- Mock server completo para testes de integração
-- Simulação de REST API, WebSocket e GraphQL endpoints
-- Portas dinâmicas para evitar conflitos
-- Cleanup automático após execução dos testes
+**Mock Server for Testing**
+- Complete mock server for integration tests
+- Simulation of REST API, WebSocket and GraphQL endpoints
+- Dynamic ports to avoid conflicts
+- Automatic cleanup after test execution
 
-**Testes de Integração Aprimorados**
-- 12/12 testes de integração passando
-- Testes isolados sem dependências externas
-- Execução mais rápida e confiável
-- Cobertura completa de todas as APIs
+**Enhanced Integration Tests**
+- 12/12 integration tests passing
+- Isolated tests without external dependencies
+- Faster and more reliable execution
+- Complete coverage of all APIs
 
-#### 🔧 Melhorias Técnicas
+#### 🔧 Technical Improvements
 
-**Infraestrutura de Testes**
-- `MockServer` com gerenciamento de ciclo de vida
-- Configuração automática de portas disponíveis
-- Handlers mock para todos os endpoints
-- Integração com `with_mock_server` helper
+**Test Infrastructure**
+- `MockServer` with lifecycle management
+- Automatic configuration of available ports
+- Mock handlers for all endpoints
+- Integration with `with_mock_server` helper
 
-**Confiabilidade**
-- Eliminação de falhas por conflitos de porta
-- Testes determinísticos e reproduzíveis
-- Isolamento completo entre execuções
-- Validação de todos os componentes core
+**Reliability**
+- Elimination of failures due to port conflicts
+- Deterministic and reproducible tests
+- Complete isolation between executions
+- Validation of all core components
 
-#### 📊 Métricas de Qualidade
+#### 📊 Quality Metrics
 
-- **Cobertura de Testes**: 100% dos endpoints testados
-- **Tempo de Execução**: Redução de 60% no tempo de testes
-- **Confiabilidade**: 0% de falhas por dependências externas
-- **Manutenibilidade**: Testes mais fáceis de manter e debugar
+- **Test Coverage**: 100% of endpoints tested
+- **Execution Time**: 60% reduction in test time
+- **Reliability**: 0% failures due to external dependencies
+- **Maintainability**: Tests easier to maintain and debug
 
 ---
 
 ## [1.0.0] - 2024-12-19
 
-### 🎉 Lançamento Inicial
+### 🎉 Initial Release
 
-#### ✨ Funcionalidades Adicionadas
+#### ✨ Added Features
 
-**Servidor Flexível**
-- Seleção de servidores específicos (`--servers rest,grpc,websocket,all`)
-- Configuração de IP de binding (`--host 0.0.0.0,localhost,IP_específico`)
-- Configuração de portas customizadas (`--port`, `--grpc-port`, `--websocket-port`)
-- Suporte a interface de rede específica (`--interface`)
+**Flexible Server**
+- Specific server selection (`--servers rest,grpc,websocket,all`)
+- IP binding configuration (`--host 0.0.0.0,localhost,specific_IP`)
+- Custom port configuration (`--port`, `--grpc-port`, `--websocket-port`)
+- Specific network interface support (`--interface`)
 
-**APIs Completas**
-- REST API com endpoints completos para locks, sagas, events e cache
-- gRPC API com Volo para alta performance
-- WebSocket API para notificações em tempo real
-- Health checks e métricas Prometheus
+**Complete APIs**
+- REST API with complete endpoints for locks, sagas, events and cache
+- gRPC API with Volo for high performance
+- WebSocket API for real-time notifications
+- Health checks and Prometheus metrics
 
 **Core Engine**
-- Lock Manager distribuído com Redis
-- Saga Orchestrator para transações distribuídas
-- Event Store para auditoria e replay
-- Cache Manager com TTL e tags
+- Distributed Lock Manager with Redis
+- Saga Orchestrator for distributed transactions
+- Event Store for auditing and replay
+- Cache Manager with TTL and tags
 
-**Segurança**
-- Autenticação JWT
-- API Keys com permissões granulares
-- CORS configurável
+**Security**
+- JWT Authentication
+- API Keys with granular permissions
+- Configurable CORS
 - Rate limiting
 
-**Observabilidade**
-- Métricas Prometheus integradas
-- Tracing com OpenTelemetry
-- Logging estruturado
-- Dashboard Grafana
+**Observability**
+- Integrated Prometheus metrics
+- Tracing with OpenTelemetry
+- Structured logging
+- Grafana dashboard
 
 **SDKs**
-- Python SDK completo
-- Node.js SDK completo
-- Java SDK completo
-- C# SDK completo
-- Go SDK completo
+- Complete Python SDK
+- Complete Node.js SDK
+- Complete Java SDK
+- Complete C# SDK
+- Complete Go SDK
 
-**Infraestrutura**
-- Docker containers otimizados
-- Docker Compose para desenvolvimento
+**Infrastructure**
+- Optimized Docker containers
+- Docker Compose for development
 - Kubernetes manifests
 - Helm charts
-- CI/CD com GitHub Actions
+- CI/CD with GitHub Actions
 
-#### 🔧 Melhorias Técnicas
+#### 🔧 Technical Improvements
 
 **Performance**
-- Execução simultânea de múltiplos servidores com `tokio::select!`
-- Zero-copy string handling com `FastStr`
-- Pool de conexões otimizado
-- Compressão gzip
+- Simultaneous execution of multiple servers with `tokio::select!`
+- Zero-copy string handling with `FastStr`
+- Optimized connection pool
+- gzip compression
 
-**Confiabilidade**
-- Tratamento robusto de erros
-- Retry policies configuráveis
+**Reliability**
+- Robust error handling
+- Configurable retry policies
 - Circuit breakers
-- Health checks detalhados
+- Detailed health checks
 
-**Usabilidade**
-- CLI intuitivo com `clap`
-- Help contextual completo
-- Modos verbose e quiet
-- Validação de configuração
+**Usability**
+- Intuitive CLI with `clap`
+- Complete contextual help
+- Verbose and quiet modes
+- Configuration validation
 
-#### 📚 Documentação
+#### 📚 Documentation
 
-- README completo com exemplos práticos
-- API Reference detalhada
-- Roadmap de desenvolvimento
-- Guias de deployment
-- Exemplos de uso para cada SDK
+- Complete README with practical examples
+- Detailed API Reference
+- Development roadmap
+- Deployment guides
+- Usage examples for each SDK
 
-#### 🐛 Correções
+#### 🐛 Fixes
 
-- Resolução de incompatibilidade de versões Rust
-- Correção de warnings de compilação
-- Otimização de dependências
-- Melhoria na estabilidade do servidor
+- Resolution of Rust version incompatibility
+- Compilation warnings fixes
+- Dependency optimization
+- Server stability improvements
 
 ---
 
-## Próximas Versões
+## Upcoming Versions
 
-### [1.1.0] - Planejado
-- Clustering automático
+### [1.1.0] - Planned
+- Automatic clustering
 - Load balancing
-- Backup e restore
-- Monitoramento avançado
+- Backup and restore
+- Advanced monitoring
 
-### [1.2.0] - Planejado
+### [1.2.0] - Planned
 - Multi-tenancy
-- Quotas e limites
-- Analytics avançados
-- Integração com mais backends
+- Quotas and limits
+- Advanced analytics
+- Integration with more backends
 
-### [2.0.0] - Planejado
-- Interface web de administração
-- Marketplace de plugins
-- API GraphQL
-- Suporte a edge computing
+### [2.0.0] - Planned
+- Web administration interface
+- Plugin marketplace
+- GraphQL API
+- Edge computing support

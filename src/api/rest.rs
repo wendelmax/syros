@@ -1,7 +1,7 @@
-//! REST API module for the Syros Platform.
+//! REST API module for the Syros.
 //!
 //! This module defines the REST API routes, handlers, and state management
-//! for the Syros Platform. It provides endpoints for distributed locks,
+//! for the Syros. It provides endpoints for distributed locks,
 //! saga orchestration, event sourcing, caching, authentication, and RBAC.
 
 use crate::api::graphql::{graphql_handler, graphql_playground};
@@ -71,7 +71,7 @@ async fn websocket_handler(
 
 /// Creates the main REST API router with all endpoints.
 ///
-/// This function sets up all the REST API routes for the Syros Platform,
+/// This function sets up all the REST API routes for the Syros,
 /// including health checks, core functionality (locks, sagas, events, cache),
 /// authentication, RBAC, GraphQL, and WebSocket endpoints.
 ///

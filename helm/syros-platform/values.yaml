@@ -68,7 +68,7 @@ tolerations: []
 
 affinity: {}
 
-# Syros Platform specific configuration
+# Syros specific configuration
 config:
   server:
     host: "0.0.0.0"

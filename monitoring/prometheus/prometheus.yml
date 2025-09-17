@@ -7,7 +7,7 @@ rule_files:
   # - "second_rules.yml"
 
 scrape_configs:
-  # Syros Platform
+  # Syros
   - job_name: 'syros-platform'
     static_configs:
       - targets: ['localhost:8080']

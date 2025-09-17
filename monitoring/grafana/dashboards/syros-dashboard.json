@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "id": null,
-    "title": "Syros Platform Dashboard",
+    "title": "Syros Dashboard",
     "tags": ["syros", "distributed-systems"],
     "style": "dark",
     "timezone": "browser",

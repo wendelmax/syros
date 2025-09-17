@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Syros Platform Java SDK
+ * Syros Java SDK
  * 
- * Provides a Java interface to interact with Syros Platform,
+ * Provides a Java interface to interact with Syros,
  * including REST APIs and WebSocket communication.
  */
 public class SyrosClient {

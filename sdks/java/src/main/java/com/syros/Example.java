@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Example usage of Syros Platform Java SDK
+ * Example usage of Syros Java SDK
  */
 public class Example {
     public static void main(String[] args) {
         SyrosClient client = new SyrosClient();
 
         try {
-            System.out.println("🚀 Syros Platform Java SDK Example");
+            System.out.println("🚀 Syros Java SDK Example");
             System.out.println("=" * 50);
 
             // Test REST API
