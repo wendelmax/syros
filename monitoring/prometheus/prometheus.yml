@@ -8,7 +8,7 @@ rule_files:
 
 scrape_configs:
   # Syros
-  - job_name: 'syros-platform'
+  - job_name: 'syros'
     static_configs:
       - targets: ['localhost:8080']
     metrics_path: '/metrics'

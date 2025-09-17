@@ -64,7 +64,6 @@ pub async fn get_lock_status(
     })))
 }
 
-// Saga handlers
 pub async fn start_saga(
     State(_state): State<ApiState>,
     Json(payload): Json<Value>,
@@ -88,7 +87,6 @@ pub async fn get_saga_status(
     })))
 }
 
-// Event handlers
 pub async fn append_event(
     State(_state): State<ApiState>,
     Json(payload): Json<Value>,
@@ -112,7 +110,6 @@ pub async fn get_events(
     })))
 }
 
-// Cache handlers
 pub async fn set_cache(
     State(_state): State<ApiState>,
     Path(key): Path<String>,

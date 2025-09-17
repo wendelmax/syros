@@ -24,9 +24,9 @@ RUN apt-get update && apt-get install -y \
     libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app/target/release/syros-platform /app/syros-platform
+COPY --from=builder /app/target/release/syros /app/syros
 COPY --from=builder /app/config /app/config
 
 EXPOSE 8080 9090 8081
 
-CMD ["./syros-platform"]
+CMD ["./syros"]

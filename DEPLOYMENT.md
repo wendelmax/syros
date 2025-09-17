@@ -23,17 +23,17 @@ cargo run -- start --servers all --host 0.0.0.0
 
 ```bash
 # Build image
-docker build -t syros-platform .
+docker build -t syros .
 
 # Run with Docker
-docker run -p 8080:8080 -p 9090:9090 syros-platform
+docker run -p 8080:8080 -p 9090:9090 syros
 
 # Run with specific configuration
 docker run -p 8080:8080 -p 9090:9090 \
   -e SYROS_HOST=0.0.0.0 \
   -e SYROS_PORT=8080 \
   -e SYROS_GRPC_PORT=9090 \
-  syros-platform
+  syros
 ```
 
 ## 🏗️ Deployment Configurations
@@ -110,11 +110,11 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app/target/release/syros-platform /usr/local/bin/
+COPY --from=builder /app/target/release/syros /usr/local/bin/
 
 EXPOSE 8080 9090 8081
 
-CMD ["syros-platform", "start", "--servers", "all", "--host", "0.0.0.0"]
+CMD ["syros", "start", "--servers", "all", "--host", "0.0.0.0"]
 ```
 
 ### Docker Compose
@@ -123,7 +123,7 @@ CMD ["syros-platform", "start", "--servers", "all", "--host", "0.0.0.0"]
 version: '3.8'
 
 services:
-  syros-platform:
+  syros:
     build: .
     ports:
       - "8080:8080"  # REST API
@@ -191,7 +191,7 @@ volumes:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: syros-platform
+  name: syros
 ```
 
 ### ConfigMap
@@ -201,7 +201,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: syros-config
-  namespace: syros-platform
+  namespace: syros
 data:
   host: "0.0.0.0"
   port: "8080"
@@ -216,21 +216,21 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: syros-platform
-  namespace: syros-platform
+  name: syros
+  namespace: syros
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: syros-platform
+      app: syros
   template:
     metadata:
       labels:
-        app: syros-platform
+        app: syros
     spec:
       containers:
-      - name: syros-platform
-        image: syros-platform:latest
+      - name: syros
+        image: syros:latest
         ports:
         - containerPort: 8080
           name: rest
@@ -276,11 +276,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: syros-platform-service
-  namespace: syros-platform
+  name: syros-service
+  namespace: syros
 spec:
   selector:
-    app: syros-platform
+    app: syros
   ports:
   - name: rest
     port: 8080
@@ -367,13 +367,13 @@ curl http://localhost:8080/metrics
 
 ```bash
 # Real-time logs
-docker logs -f syros-platform
+docker logs -f syros
 
 # Filtered logs
-docker logs syros-platform | grep ERROR
+docker logs syros | grep ERROR
 
 # Structured logs
-docker logs syros-platform | jq .
+docker logs syros | jq .
 ```
 
 ## 🔒 Security
@@ -437,12 +437,12 @@ server {
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: syros-platform-hpa
+  name: syros-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: syros-platform
+    name: syros
   minReplicas: 3
   maxReplicas: 10
   metrics:

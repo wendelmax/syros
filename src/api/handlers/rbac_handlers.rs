@@ -1,3 +1,8 @@
+//! RBAC handlers for the Syros API.
+//!
+//! This module provides HTTP handlers for Role-Based Access Control (RBAC)
+//! operations, including user management, role assignment, and permission checking.
+
 use crate::api::rest::ApiState;
 use crate::auth::{Permission, Role};
 use axum::{
@@ -254,42 +259,60 @@ pub async fn activate_user(
     }
 }
 
-// Request/Response types
+
+/// Request structure for creating a new user.
 #[derive(serde::Deserialize)]
 pub struct CreateUserRequest {
+    /// Username for the new user
     pub username: String,
+    /// Email address for the new user
     pub email: String,
+    /// List of roles to assign to the user
     pub roles: Vec<Role>,
 }
 
+/// Request structure for updating user roles.
 #[derive(serde::Deserialize)]
 pub struct UpdateUserRolesRequest {
+    /// New list of roles for the user
     pub roles: Vec<Role>,
 }
 
+/// Request structure for adding a permission to a user.
 #[derive(serde::Deserialize)]
 pub struct AddPermissionRequest {
+    /// Permission to add
     pub permission: Permission,
 }
 
+/// Request structure for removing a permission from a user.
 #[derive(serde::Deserialize)]
 pub struct RemovePermissionRequest {
+    /// Permission to remove
     pub permission: Permission,
 }
 
+/// Request structure for checking user permissions.
 #[derive(serde::Deserialize)]
 pub struct CheckPermissionRequest {
+    /// Permission to check
     pub permission: Permission,
 }
 
+/// Request structure for checking resource-specific permissions.
 #[derive(serde::Deserialize)]
 pub struct CheckResourcePermissionRequest {
+    /// Permission to check
     pub permission: Permission,
 }
 
+/// Request structure for creating a custom role.
 #[derive(serde::Deserialize)]
 pub struct CreateCustomRoleRequest {
+    /// Name of the custom role
     pub name: String,
+    /// Description of the role
     pub description: String,
+    /// List of permissions for the role
     pub permissions: Vec<Permission>,
 }

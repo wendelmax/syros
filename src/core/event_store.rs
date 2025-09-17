@@ -70,7 +70,6 @@ impl EventStore {
         let event_id = Uuid::new_v4().to_string();
         let now = Utc::now();
 
-        // Incrementa versão
         let mut versions = self.versions.write().await;
         let version = *versions.entry(request.stream_id.clone()).or_insert(0) + 1;
         versions.insert(request.stream_id.clone(), version);
@@ -105,12 +104,10 @@ impl EventStore {
         if let Some(stream_events) = events.get(&request.stream_id) {
             let mut filtered_events = stream_events.clone();
 
-            // Filtra por versão se especificado
             if let Some(from_version) = request.from_version {
                 filtered_events.retain(|event| event.version >= from_version);
             }
 
-            // Aplica limite se especificado
             if let Some(limit) = request.limit {
                 filtered_events.truncate(limit as usize);
             }

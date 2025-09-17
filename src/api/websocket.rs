@@ -1,3 +1,8 @@
+//! WebSocket service for real-time communication.
+//!
+//! This module provides WebSocket functionality for real-time updates
+//! and communication with the Syros distributed coordination service.
+
 use crate::core::{CacheManager, EventStore, LockManager, SagaOrchestrator};
 use axum::{
     extract::{
@@ -11,13 +16,21 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::broadcast;
 
+/// WebSocket message structure for real-time communication.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WebSocketMessage {
+    /// Type of the message
     pub r#type: String,
+    /// Message data (JSON)
     pub data: serde_json::Value,
+    /// Timestamp when the message was created
     pub timestamp: String,
 }
 
+/// WebSocket service for handling real-time connections.
+///
+/// This service manages WebSocket connections and provides real-time
+/// updates for distributed coordination operations.
 pub struct WebSocketService {
     _lock_manager: Arc<LockManager>,
     _saga_orchestrator: Arc<SagaOrchestrator>,
@@ -27,6 +40,18 @@ pub struct WebSocketService {
 }
 
 impl WebSocketService {
+    /// Creates a new WebSocket service instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `lock_manager` - Distributed lock manager
+    /// * `saga_orchestrator` - Saga orchestration service
+    /// * `event_store` - Event store for event sourcing
+    /// * `cache_manager` - Cache manager for distributed caching
+    ///
+    /// # Returns
+    ///
+    /// Returns a new `WebSocketService` instance.
     pub fn new(
         lock_manager: LockManager,
         saga_orchestrator: SagaOrchestrator,
@@ -44,6 +69,19 @@ impl WebSocketService {
         }
     }
 
+    /// Handles WebSocket upgrade requests.
+    ///
+    /// This method upgrades HTTP connections to WebSocket and starts
+    /// the WebSocket handler for real-time communication.
+    ///
+    /// # Arguments
+    ///
+    /// * `ws` - WebSocket upgrade request
+    /// * `state` - WebSocket service state
+    ///
+    /// # Returns
+    ///
+    /// Returns a WebSocket response.
     pub async fn handle_websocket(
         ws: WebSocketUpgrade,
         State(state): State<Arc<Self>>,
@@ -51,6 +89,14 @@ impl WebSocketService {
         ws.on_upgrade(|socket| handle_socket(socket, state))
     }
 
+    /// Gets the event sender for broadcasting messages.
+    ///
+    /// This method returns a clone of the event sender that can be used
+    /// to broadcast messages to all connected WebSocket clients.
+    ///
+    /// # Returns
+    ///
+    /// Returns a broadcast sender for WebSocket messages.
     pub fn get_event_sender(&self) -> broadcast::Sender<WebSocketMessage> {
         self.event_sender.clone()
     }
@@ -61,11 +107,10 @@ async fn handle_socket(socket: WebSocket, state: Arc<WebSocketService>) {
 
     let (mut sender, mut receiver) = socket.split();
 
-    // Enviar mensagem de boas-vindas
     let welcome_msg = WebSocketMessage {
         r#type: "welcome".to_string(),
         data: serde_json::json!({
-            "message": "Conectado ao Syros WebSocket",
+            "message": "Connected to Syros WebSocket",
             "version": env!("CARGO_PKG_VERSION")
         }),
         timestamp: chrono::Utc::now().to_rfc3339(),
@@ -75,10 +120,8 @@ async fn handle_socket(socket: WebSocket, state: Arc<WebSocketService>) {
         let _ = sender.send(Message::Text(msg)).await;
     }
 
-    // Loop principal para processar mensagens
     loop {
         tokio::select! {
-            // Receber mensagens do cliente
             msg = receiver.next() => {
                 if let Some(Ok(msg)) = msg {
                     match msg {
@@ -118,7 +161,6 @@ async fn handle_socket(socket: WebSocket, state: Arc<WebSocketService>) {
                     break;
                 }
             }
-            // Enviar eventos para o cliente
             event_msg = rx.recv() => {
                 if let Ok(msg) = event_msg {
                     if let Ok(msg_str) = serde_json::to_string(&msg) {

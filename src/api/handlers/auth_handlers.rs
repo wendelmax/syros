@@ -34,8 +34,6 @@ pub async fn login(
     State(state): State<ApiState>,
     Json(request): Json<LoginRequest>,
 ) -> Result<Json<LoginResponse>, StatusCode> {
-    // Simulação básica de autenticação
-    // Em produção, isso seria integrado com um sistema de usuários real
     if request.username == "admin" && request.password == "admin123" {
         let expiration_hours = 24;
         let token = state

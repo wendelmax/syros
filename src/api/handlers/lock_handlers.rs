@@ -49,13 +49,12 @@ pub async fn acquire_lock(
             .map(std::time::Duration::from_secs),
     };
 
-    // Registrar métricas
     state.metrics.increment_locks_acquired();
 
     match state.lock_manager.acquire_lock(lock_request).await {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
-            eprintln!("Erro ao adquirir lock: {:?}", e);
+            eprintln!("Error acquiring lock: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
@@ -72,13 +71,12 @@ pub async fn release_lock(
         owner: request.owner,
     };
 
-    // Registrar métricas
     state.metrics.increment_locks_released();
 
     match state.lock_manager.release_lock(release_request).await {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
-            eprintln!("Erro ao liberar lock: {:?}", e);
+            eprintln!("Error releasing lock: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
@@ -108,7 +106,7 @@ pub async fn get_lock_status(
             is_locked: false,
         })),
         Err(e) => {
-            eprintln!("Erro ao obter status do lock: {:?}", e);
+            eprintln!("Error getting lock status: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }

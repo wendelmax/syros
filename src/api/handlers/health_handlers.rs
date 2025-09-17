@@ -38,7 +38,6 @@ pub async fn health_check() -> Result<Json<HealthResponse>, StatusCode> {
 pub async fn readiness_check() -> Result<Json<ReadinessResponse>, StatusCode> {
     let mut checks = Vec::new();
 
-    // Verifica se os componentes estão prontos
     checks.push(CheckResult {
         name: "lock_manager".to_string(),
         status: "ready".to_string(),

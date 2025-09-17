@@ -63,7 +63,7 @@ clean:
 # Docker commands
 docker:
 	@echo "🐳 Building Docker image..."
-	docker build -t syros-platform .
+	docker build -t syros .
 
 run:
 	@echo "🚀 Starting Syros with Docker Compose..."
@@ -94,17 +94,17 @@ serve-docs:
 release:
 	@echo "🚀 Building release version..."
 	cargo build --release
-	@echo "✅ Release build completed: target/release/syros-platform"
+	@echo "✅ Release build completed: target/release/syros"
 
 package: release
 	@echo "📦 Creating release package..."
 	mkdir -p dist
-	cp target/release/syros-platform dist/
+	cp target/release/syros dist/
 	cp -r config dist/
 	cp -r examples dist/
 	cp README.md LICENSE dist/
-	tar -czf dist/syros-platform-$(shell cargo pkgid | cut -d# -f2).tar.gz -C dist .
-	@echo "✅ Release package created: dist/syros-platform-*.tar.gz"
+	tar -czf dist/syros-$(shell cargo pkgid | cut -d# -f2).tar.gz -C dist .
+	@echo "✅ Release package created: dist/syros-*.tar.gz"
 
 # Setup commands
 setup:
@@ -131,7 +131,7 @@ audit:
 profile:
 	@echo "📈 Running performance profile..."
 	cargo build --release
-	perf record --call-graph=dwarf target/release/syros-platform
+	perf record --call-graph=dwarf target/release/syros
 	perf report
 
 # Load testing

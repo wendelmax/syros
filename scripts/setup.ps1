@@ -24,10 +24,10 @@ Write-Host "⏳ Aguardando serviços ficarem prontos..." -ForegroundColor Yellow
 Start-Sleep -Seconds 10
 
 Write-Host "🔧 Executando migrações do banco de dados..." -ForegroundColor Yellow
-docker-compose run --rm syros-platform /app/syros-platform migrate
+docker-compose run --rm syros /app/syros migrate
 
 Write-Host "🚀 Iniciando Syros..." -ForegroundColor Yellow
-docker-compose up -d syros-platform
+docker-compose up -d syros
 
 Write-Host "📊 Iniciando serviços de monitoramento..." -ForegroundColor Yellow
 docker-compose up -d prometheus grafana
@@ -41,5 +41,5 @@ Write-Host "  - Syros WebSocket: ws://localhost:8081" -ForegroundColor White
 Write-Host "  - Prometheus: http://localhost:9091" -ForegroundColor White
 Write-Host "  - Grafana: http://localhost:3000 (admin/admin)" -ForegroundColor White
 Write-Host ""
-Write-Host "📚 Para ver logs: docker-compose logs -f syros-platform" -ForegroundColor Yellow
+Write-Host "📚 Para ver logs: docker-compose logs -f syros" -ForegroundColor Yellow
 Write-Host "🛑 Para parar: docker-compose down" -ForegroundColor Yellow

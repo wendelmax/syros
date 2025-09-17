@@ -41,7 +41,7 @@ burst_size = 100
 [service_discovery]
 enabled = true
 consul_url = "http://localhost:8500"
-service_name = "syros-platform"
-service_id = "syros-platform-1"
+service_name = "syros"
+service_id = "syros-1"
 health_check_interval = 10
 tags = ["syros", "platform", "coordination"]

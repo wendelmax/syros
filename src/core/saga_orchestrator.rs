@@ -124,12 +124,11 @@ impl SagaOrchestrator {
         let mut sagas = self.sagas.write().await;
         sagas.insert(saga_id.clone(), saga);
 
-        // Inicia execução assíncrona
         let orchestrator_clone = Arc::new(self.clone());
         let saga_id_clone = saga_id.clone();
         tokio::spawn(async move {
             if let Err(e) = orchestrator_clone.execute_saga(&saga_id_clone).await {
-                eprintln!("Erro ao executar saga {}: {}", saga_id_clone, e);
+                eprintln!("Error executing saga {}: {}", saga_id_clone, e);
             }
         });
 
@@ -150,16 +149,13 @@ impl SagaOrchestrator {
 
         drop(sagas);
 
-        // Simula execução dos steps
         for step_index in 0..self.get_saga_steps_count(saga_id).await? {
             if let Err(e) = self.execute_step(saga_id, step_index).await {
-                // Se falhou, inicia compensação
                 self.compensate_saga(saga_id).await?;
                 return Err(e);
             }
         }
 
-        // Marca como completada
         let mut sagas = self.sagas.write().await;
         if let Some(saga) = sagas.get_mut(saga_id) {
             saga.status = SagaStatus::Completed;
@@ -179,10 +175,8 @@ impl SagaOrchestrator {
 
         drop(sagas);
 
-        // Simula execução do step (em implementação real, faria chamada HTTP/gRPC)
         tokio::time::sleep(Duration::from_millis(100)).await;
 
-        // Simula falha ocasional para testar compensação
         if fastrand::f32() < 0.1 {
             return Err(SyrosError::SagaError("Step execution failed".to_string()));
         }
@@ -200,13 +194,11 @@ impl SagaOrchestrator {
 
         drop(sagas);
 
-        // Executa compensação em ordem reversa
         let steps_count = self.get_saga_steps_count(saga_id).await?;
         for step_index in (0..steps_count).rev() {
             self.compensate_step(saga_id, step_index).await?;
         }
 
-        // Marca como compensada
         let mut sagas = self.sagas.write().await;
         if let Some(saga) = sagas.get_mut(saga_id) {
             saga.status = SagaStatus::Compensated;
@@ -217,7 +209,6 @@ impl SagaOrchestrator {
     }
 
     async fn compensate_step(&self, _saga_id: &str, _step_index: usize) -> Result<()> {
-        // Simula compensação do step
         tokio::time::sleep(Duration::from_millis(50)).await;
         Ok(())
     }
@@ -237,4 +228,3 @@ impl SagaOrchestrator {
     }
 }
 
-// Clone já implementado via derive

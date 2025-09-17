@@ -12,19 +12,19 @@ This Helm chart deploys the Syros - a distributed coordination service built in 
 
 ## Installing the Chart
 
-To install the chart with the release name `syros-platform`:
+To install the chart with the release name `syros`:
 
 ```bash
 helm repo add syros https://charts.syros.com
-helm install syros-platform syros/syros-platform
+helm install syros syros/syros
 ```
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `syros-platform` deployment:
+To uninstall/delete the `syros` deployment:
 
 ```bash
-helm delete syros-platform
+helm delete syros
 ```
 
 ## Configuration
@@ -34,7 +34,7 @@ The following table lists the configurable parameters and their default values.
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `replicaCount` | Number of replicas | `3` |
-| `image.repository` | Image repository | `syros-platform` |
+| `image.repository` | Image repository | `syros` |
 | `image.tag` | Image tag | `1.0.0` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `service.type` | Service type | `ClusterIP` |
@@ -60,13 +60,13 @@ The following table lists the configurable parameters and their default values.
 ### Basic Installation
 
 ```bash
-helm install syros-platform ./helm/syros-platform
+helm install syros ./helm/syros
 ```
 
 ### With Custom Configuration
 
 ```bash
-helm install syros-platform ./helm/syros-platform \
+helm install syros ./helm/syros \
   --set replicaCount=5 \
   --set config.serviceDiscovery.enabled=true \
   --set resources.limits.memory=2Gi
@@ -75,7 +75,7 @@ helm install syros-platform ./helm/syros-platform \
 ### With Ingress
 
 ```bash
-helm install syros-platform ./helm/syros-platform \
+helm install syros ./helm/syros \
   --set ingress.enabled=true \
   --set ingress.hosts[0].host=syros.example.com \
   --set ingress.hosts[0].paths[0].path=/ \
@@ -85,7 +85,7 @@ helm install syros-platform ./helm/syros-platform \
 ### With External Dependencies
 
 ```bash
-helm install syros-platform ./helm/syros-platform \
+helm install syros ./helm/syros \
   --set redis.enabled=false \
   --set postgresql.enabled=false \
   --set consul.enabled=false \
@@ -99,7 +99,7 @@ helm install syros-platform ./helm/syros-platform \
 The chart includes optional Prometheus and Grafana monitoring:
 
 ```bash
-helm install syros-platform ./helm/syros-platform \
+helm install syros ./helm/syros \
   --set monitoring.enabled=true
 ```
 
@@ -113,7 +113,7 @@ For production deployments, make sure to:
 4. Use proper RBAC
 
 ```bash
-helm install syros-platform ./helm/syros-platform \
+helm install syros ./helm/syros \
   --set config.security.jwtSecret=your-secure-jwt-secret \
   --set config.security.apiKeyEncryptionKey=your-secure-api-key \
   --set postgresql.auth.postgresPassword=your-secure-password
@@ -124,30 +124,30 @@ helm install syros-platform ./helm/syros-platform \
 ### Check Pod Status
 
 ```bash
-kubectl get pods -l app.kubernetes.io/name=syros-platform
+kubectl get pods -l app.kubernetes.io/name=syros
 ```
 
 ### View Logs
 
 ```bash
-kubectl logs -l app.kubernetes.io/name=syros-platform
+kubectl logs -l app.kubernetes.io/name=syros
 ```
 
 ### Check Service Discovery
 
 ```bash
-kubectl exec -it deployment/syros-platform -- curl http://localhost:8080/health
+kubectl exec -it deployment/syros -- curl http://localhost:8080/health
 ```
 
 ### Port Forward for Testing
 
 ```bash
 # HTTP API
-kubectl port-forward svc/syros-platform 8080:8080
+kubectl port-forward svc/syros 8080:8080
 
 # gRPC API
-kubectl port-forward svc/syros-platform 9090:9090
+kubectl port-forward svc/syros 9090:9090
 
 # WebSocket API
-kubectl port-forward svc/syros-platform 8081:8081
+kubectl port-forward svc/syros 8081:8081
 ```

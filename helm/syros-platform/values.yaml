@@ -1,10 +1,10 @@
-# Default values for syros-platform
+# Default values for syros
 # This is a YAML-formatted file.
 
 replicaCount: 3
 
 image:
-  repository: syros-platform
+  repository: syros
   pullPolicy: IfNotPresent
   tag: "1.0.0"
 
@@ -41,7 +41,7 @@ ingress:
   className: ""
   annotations: {}
   hosts:
-    - host: syros-platform.local
+    - host: syros.local
       paths:
         - path: /
           pathType: Prefix
@@ -99,8 +99,8 @@ config:
   serviceDiscovery:
     enabled: true
     consulUrl: "http://consul:8500"
-    serviceName: "syros-platform"
-    serviceId: "syros-platform-{{ .Release.Revision }}"
+    serviceName: "syros"
+    serviceId: "syros-{{ .Release.Revision }}"
     healthCheckInterval: 10
     tags: ["syros", "platform", "coordination"]
 

@@ -101,7 +101,6 @@ impl CacheManager {
         let now = Utc::now();
 
         if let Some(entry) = cache.get(key) {
-            // Verifica se expirou
             if let Some(expires_at) = entry.expires_at {
                 if expires_at <= now {
                     cache.remove(key);
@@ -173,7 +172,7 @@ impl CacheManager {
             if let Some(expires_at) = entry.expires_at {
                 expires_at > now
             } else {
-                true // Sem expiração
+                true // No expiration
             }
         });
 

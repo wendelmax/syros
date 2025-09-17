@@ -200,10 +200,10 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: syros-platform-${{ matrix.os }}
+        name: syros-${{ matrix.os }}
         path: |
-          target/release/syros-platform*
-          !target/release/syros-platform.d
+          target/release/syros*
+          !target/release/syros.d
 
   docker:
     name: Docker Build
@@ -219,7 +219,7 @@ jobs:
       with:
         context: .
         push: false
-        tags: syros-platform:test
+        tags: syros:test
         cache-from: type=gha
         cache-to: type=gha,mode=max
 

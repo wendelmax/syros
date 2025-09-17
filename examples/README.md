@@ -81,7 +81,7 @@ export SYROS_WS_URL=ws://localhost:8081/ws
 ```yaml
 version: '3.8'
 services:
-  syros-platform:
+  syros:
     build: ../..
     ports:
       - "8080:8080"  # REST API
@@ -100,7 +100,7 @@ Todos os exemplos geram métricas que podem ser visualizadas:
 
 - **Grafana**: http://localhost:3000 (admin/admin)
 - **Prometheus**: http://localhost:9091
-- **Logs**: `docker-compose logs -f syros-platform`
+- **Logs**: `docker-compose logs -f syros`
 
 ## 🧪 Testes
 
@@ -149,6 +149,6 @@ examples/
 Se encontrar problemas:
 
 1. Verifique se o Syros está rodando
-2. Consulte os logs: `docker-compose logs syros-platform`
+2. Consulte os logs: `docker-compose logs syros`
 3. Verifique as portas: `netstat -tlnp | grep 8080`
 4. Abra uma issue no GitHub com detalhes do erro

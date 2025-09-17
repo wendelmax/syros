@@ -1,3 +1,8 @@
+//! Saga handlers for the Syros API.
+//!
+//! This module provides HTTP handlers for saga orchestration operations,
+//! including starting sagas, checking status, and managing saga execution.
+
 use crate::api::rest::ApiState;
 use crate::core::saga_orchestrator::{
     BackoffStrategy, RetryPolicy, SagaRequest, SagaResponse, SagaStep,
@@ -9,41 +14,77 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 
+/// Request structure for starting a new saga.
 #[derive(Debug, Deserialize)]
 pub struct StartSagaRequest {
+    /// Name of the saga
     pub name: String,
+    /// List of steps to execute in the saga
     pub steps: Vec<SagaStepRequest>,
+    /// Optional metadata for the saga
     pub metadata: Option<serde_json::Value>,
 }
 
+/// Request structure for defining a saga step.
 #[derive(Debug, Deserialize)]
 pub struct SagaStepRequest {
+    /// Name of the step
     pub name: String,
+    /// Service that will execute this step
     pub service: String,
+    /// Action to perform in this step
     pub action: String,
+    /// Compensation action if this step fails
     pub compensation: String,
+    /// Timeout for this step in seconds
     pub timeout_seconds: u64,
+    /// Optional retry policy for this step
     pub retry_policy: Option<RetryPolicyRequest>,
 }
 
+/// Request structure for defining retry policy.
 #[derive(Debug, Deserialize)]
 pub struct RetryPolicyRequest {
+    /// Maximum number of retries
     pub max_retries: u32,
+    /// Backoff strategy: "exponential", "linear", or "fixed"
     pub backoff_strategy: String,
+    /// Initial delay between retries in milliseconds
     pub initial_delay_ms: u64,
 }
 
+/// Response structure for saga status information.
 #[derive(Debug, Serialize)]
 pub struct SagaStatusResponse {
+    /// Unique identifier of the saga
     pub saga_id: String,
+    /// Name of the saga
     pub name: String,
+    /// Current status of the saga
     pub status: String,
+    /// Index of the current step being executed
     pub current_step_index: Option<usize>,
+    /// Timestamp when the saga was created
     pub created_at: String,
+    /// Timestamp when the saga was last updated
     pub updated_at: String,
+    /// Optional metadata associated with the saga
     pub metadata: Option<serde_json::Value>,
 }
 
+/// Starts a new saga with the provided steps and configuration.
+///
+/// This handler creates a new saga orchestration instance and begins
+/// executing the steps according to the specified retry policies and timeouts.
+///
+/// # Arguments
+///
+/// * `state` - API state containing the saga orchestrator
+/// * `request` - Saga configuration including steps and metadata
+///
+/// # Returns
+///
+/// Returns a JSON response with saga information or an error status.
 pub async fn start_saga(
     State(state): State<ApiState>,
     Json(request): Json<StartSagaRequest>,
@@ -79,18 +120,30 @@ pub async fn start_saga(
         metadata,
     };
 
-    // Registrar métricas
     state.metrics.increment_sagas_started();
 
     match state.saga_orchestrator.start_saga(saga_request).await {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
-            eprintln!("Erro ao iniciar saga: {:?}", e);
+            eprintln!("Error starting saga: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
 }
 
+/// Retrieves the current status of a saga by its ID.
+///
+/// This handler returns detailed information about a saga's current state,
+/// including its status, current step, and metadata.
+///
+/// # Arguments
+///
+/// * `state` - API state containing the saga orchestrator
+/// * `saga_id` - Unique identifier of the saga to check
+///
+/// # Returns
+///
+/// Returns a JSON response with saga status information or an error status.
 pub async fn get_saga_status(
     State(state): State<ApiState>,
     Path(saga_id): Path<String>,
@@ -125,7 +178,7 @@ pub async fn get_saga_status(
         }
         Ok(None) => Err(StatusCode::NOT_FOUND),
         Err(e) => {
-            eprintln!("Erro ao obter status da saga: {:?}", e);
+            eprintln!("Error getting saga status: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }

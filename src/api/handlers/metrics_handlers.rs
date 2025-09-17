@@ -1,6 +1,23 @@
+//! Metrics handlers for the Syros API.
+//!
+//! This module provides HTTP handlers for metrics and monitoring operations,
+//! including Prometheus metrics collection and health checks.
+
 use crate::api::rest::ApiState;
 use axum::{http::StatusCode, response::Response};
 
+/// Handles metrics collection requests.
+///
+/// This handler returns Prometheus-formatted metrics data for monitoring
+/// the Syros service performance and health.
+///
+/// # Arguments
+///
+/// * `state` - API state containing the metrics collector
+///
+/// # Returns
+///
+/// Returns a response with Prometheus metrics data or an error status.
 pub async fn metrics_handler(
     axum::extract::State(state): axum::extract::State<ApiState>,
 ) -> Result<Response<String>, StatusCode> {

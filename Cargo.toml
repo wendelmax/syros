@@ -100,7 +100,7 @@ volo-build = "0.11"
 
 
 [[bin]]
-name = "syros-platform"
+name = "syros"
 path = "src/main.rs"
 
 [profile.release]

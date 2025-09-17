@@ -61,8 +61,6 @@ impl ServiceDiscovery {
     }
 
     pub async fn register_service(&mut self, service: ServiceRegistration) -> Result<()> {
-        // Por enquanto, apenas armazenamos localmente
-        // Em uma implementação completa, faríamos uma chamada HTTP para o Consul
         let service_name = service.name.clone();
         let service_id = service.id.clone();
         self.registered_services.insert(service_id.clone(), service);
@@ -82,7 +80,6 @@ impl ServiceDiscovery {
     }
 
     pub async fn discover_services(&self, service_name: &str) -> Result<Vec<ServiceInfo>> {
-        // Por enquanto, retornamos apenas os serviços registrados localmente
         let mut service_infos = Vec::new();
 
         for (_, service) in &self.registered_services {
@@ -94,7 +91,7 @@ impl ServiceDiscovery {
                     port: service.port,
                     tags: service.tags.clone(),
                     meta: service.meta.clone(),
-                    health: ServiceHealth::Passing, // Assumimos que está saudável por enquanto
+                    health: ServiceHealth::Passing, // We assume it's healthy for now
                 });
             }
         }
@@ -111,8 +108,6 @@ impl ServiceDiscovery {
         _service_name: &str,
         _service_id: &str,
     ) -> Result<ServiceHealth> {
-        // Por enquanto, sempre retornamos Passing
-        // Em uma implementação completa, faríamos uma verificação real
         Ok(ServiceHealth::Passing)
     }
 

@@ -38,8 +38,8 @@ output = "stdout"
 [service_discovery]
 enabled = true
 consul_url = "http://localhost:8500"
-service_name = "syros-platform"
-service_id = "syros-platform-1"
+service_name = "syros"
+service_id = "syros-1"
 health_check_interval = 30
 tags = ["api", "grpc"]
 ```
@@ -216,7 +216,7 @@ expiration = 3600
 refresh_expiration = 86400
 
 # Token issuer
-issuer = "syros-platform"
+issuer = "syros"
 
 # Token audience
 audience = "syros-clients"
@@ -339,7 +339,7 @@ format = "json"  # json, text, pretty
 output = "stdout"  # stdout, stderr, file
 
 # Log file (if output = "file")
-file_path = "/var/log/syros-platform.log"
+file_path = "/var/log/syros.log"
 
 # Log rotation
 rotation = "daily"  # daily, hourly, never
@@ -434,7 +434,7 @@ enabled = true
 jaeger_endpoint = "http://localhost:14268/api/traces"
 
 # Service name
-service_name = "syros-platform"
+service_name = "syros"
 
 # Sampling settings
 sampling_rate = 0.1
@@ -487,10 +487,10 @@ enabled = true
 url = "http://localhost:8500"
 
 # Service name
-service_name = "syros-platform"
+service_name = "syros"
 
 # Service ID
-service_id = "syros-platform-1"
+service_id = "syros-1"
 
 # Service address
 service_address = "127.0.0.1"
@@ -608,8 +608,8 @@ export SYROS_LOG_OUTPUT=stdout
 
 # Service Discovery
 export SYROS_CONSUL_URL=http://localhost:8500
-export SYROS_SERVICE_NAME=syros-platform
-export SYROS_SERVICE_ID=syros-platform-1
+export SYROS_SERVICE_NAME=syros
+export SYROS_SERVICE_ID=syros-1
 ```
 
 ### Environment-specific Configuration
@@ -679,7 +679,7 @@ cors_origins = ["https://app.example.com"]
 level = "info"
 format = "json"
 output = "file"
-file_path = "/var/log/syros-platform.log"
+file_path = "/var/log/syros.log"
 
 [observability.metrics]
 enabled = true
@@ -696,7 +696,7 @@ url = "http://consul:8500"
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: syros-platform-config
+  name: syros-config
 data:
   config.toml: |
     [server]

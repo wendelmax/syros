@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "syros-platform.fullname" . }}-config
+  name: {{ include "syros.fullname" . }}-config
   labels:
-    {{- include "syros-platform.labels" . | nindent 4 }}
+    {{- include "syros.labels" . | nindent 4 }}
 data:
   config.toml: |
     [server]

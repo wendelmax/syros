@@ -4,7 +4,7 @@
 //! service that provides distributed locks, saga orchestration, event sourcing,
 //! and caching capabilities for microservices architectures.
 
-use syros_platform::{cli, server};
+use syros::{cli, server};
 
 /// Main entry point for the Syros application.
 ///
@@ -71,7 +71,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some(cli::Commands::Config { validate }) => {
             println!("Checking configuration...");
             if validate {
-                match syros_platform::config::Config::load() {
+                match syros::config::Config::load() {
                     Ok(config) => {
                         println!("Configuration valid!");
                         if cli.verbose {

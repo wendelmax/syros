@@ -24,10 +24,10 @@ echo "⏳ Aguardando serviços ficarem prontos..."
 sleep 10
 
 echo "🔧 Executando migrações do banco de dados..."
-docker-compose run --rm syros-platform /app/syros-platform migrate
+docker-compose run --rm syros /app/syros migrate
 
 echo "🚀 Iniciando Syros..."
-docker-compose up -d syros-platform
+docker-compose up -d syros
 
 echo "📊 Iniciando serviços de monitoramento..."
 docker-compose up -d prometheus grafana
@@ -41,5 +41,5 @@ echo "  - Syros WebSocket: ws://localhost:8081"
 echo "  - Prometheus: http://localhost:9091"
 echo "  - Grafana: http://localhost:3000 (admin/admin)"
 echo ""
-echo "📚 Para ver logs: docker-compose logs -f syros-platform"
+echo "📚 Para ver logs: docker-compose logs -f syros"
 echo "🛑 Para parar: docker-compose down"

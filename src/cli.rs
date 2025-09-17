@@ -11,7 +11,7 @@ use clap::{Parser, Subcommand};
 /// This struct defines the global command line arguments that are available
 /// across all subcommands, including verbose mode, quiet mode, and configuration file path.
 #[derive(Parser)]
-#[command(name = "syros-platform")]
+#[command(name = "syros")]
 #[command(about = "Syros - Distributed Coordination Service")]
 #[command(version = env!("CARGO_PKG_VERSION"))]
 pub struct Cli {

@@ -6,9 +6,9 @@ rule_files:
   - "syros_rules.yml"
 
 scrape_configs:
-  - job_name: 'syros-platform'
+  - job_name: 'syros'
     static_configs:
-      - targets: ['syros-platform:9090']
+      - targets: ['syros:9090']
     metrics_path: '/metrics'
     scrape_interval: 5s
 

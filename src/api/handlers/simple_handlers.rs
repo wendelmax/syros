@@ -1,3 +1,8 @@
+//! Simple handlers for basic API operations.
+//!
+//! This module provides simplified HTTP handlers for basic operations
+//! that don't require complex business logic or state management.
+
 use axum::{
     extract::{Path, State},
     http::StatusCode,
@@ -6,35 +11,52 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use crate::api::rest::ApiState;
 
+/// Request structure for acquiring a distributed lock.
 #[derive(Debug, Deserialize)]
 pub struct AcquireLockRequest {
+    /// Lock key identifier
     pub key: String,
+    /// Owner of the lock
     pub owner: String,
+    /// Time-to-live in seconds (optional)
     pub ttl_seconds: Option<u64>,
+    /// Optional metadata for the lock
     pub metadata: Option<String>,
 }
 
+/// Response structure for lock acquisition.
 #[derive(Debug, Serialize)]
 pub struct AcquireLockResponse {
+    /// Unique identifier of the acquired lock
     pub lock_id: String,
+    /// Whether the operation was successful
     pub success: bool,
+    /// Status message
     pub message: String,
 }
 
+/// Request structure for releasing a distributed lock.
 #[derive(Debug, Deserialize)]
 pub struct ReleaseLockRequest {
+    /// Lock identifier to release
     pub lock_id: String,
+    /// Owner of the lock
     pub owner: String,
 }
 
+/// Response structure for lock release.
 #[derive(Debug, Serialize)]
 pub struct ReleaseLockResponse {
+    /// Whether the operation was successful
     pub success: bool,
+    /// Status message
     pub message: String,
 }
 
+/// Response structure for lock status information.
 #[derive(Debug, Serialize)]
 pub struct LockStatusResponse {
+    /// Lock key identifier
     pub key: String,
     pub lock_id: Option<String>,
     pub owner: Option<String>,

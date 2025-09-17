@@ -81,8 +81,8 @@ pub async fn start_server(
         service_discovery: crate::config::ServiceDiscoveryConfig {
             enabled: false,
             consul_url: "http://localhost:8500".to_string(),
-            service_name: "syros-platform".to_string(),
-            service_id: "syros-platform-1".to_string(),
+            service_name: "syros".to_string(),
+            service_id: "syros-1".to_string(),
             health_check_interval: 10,
             tags: vec!["syros".to_string(), "platform".to_string()],
         },

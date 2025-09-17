@@ -180,10 +180,10 @@ curl -X POST http://localhost:8080/api/v1/auth/users \
 
 ```bash
 # 1. Build image
-docker build -t syros-platform .
+docker build -t syros .
 
 # 2. Run container
-docker run -p 8080:8080 -p 9090:9090 syros-platform
+docker run -p 8080:8080 -p 9090:9090 syros
 
 # 3. Use Docker Compose
 docker-compose up -d
@@ -196,23 +196,23 @@ docker-compose up -d
 kubectl apply -f k8s/
 
 # 2. Check pods
-kubectl get pods -l app=syros-platform
+kubectl get pods -l app=syros
 
 # 3. Check logs
-kubectl logs -f deployment/syros-platform
+kubectl logs -f deployment/syros
 ```
 
 ### How to use Helm?
 
 ```bash
 # 1. Install chart
-helm install syros-platform ./helm/syros-platform
+helm install syros ./helm/syros
 
 # 2. Update
-helm upgrade syros-platform ./helm/syros-platform
+helm upgrade syros ./helm/syros
 
 # 3. Uninstall
-helm uninstall syros-platform
+helm uninstall syros
 ```
 
 ## Monitoring and Observability
@@ -287,7 +287,7 @@ netstat -tulpn | grep :8080
 sudo kill -9 $(lsof -t -i:8080)
 
 # Kill process (Windows)
-taskkill /F /IM syros-platform.exe
+taskkill /F /IM syros.exe
 ```
 
 ### Error: "Connection refused Redis/PostgreSQL"

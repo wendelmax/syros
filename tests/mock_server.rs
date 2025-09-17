@@ -134,8 +134,8 @@ impl MockServer {
                 service_discovery: syros_platform::config::ServiceDiscoveryConfig {
                     enabled: true,
                     consul_url: "http://localhost:8500".to_string(),
-                    service_name: "syros-platform".to_string(),
-                    service_id: "syros-platform-1".to_string(),
+                    service_name: "syros".to_string(),
+                    service_id: "syros-1".to_string(),
                     health_check_interval: 30,
                     tags: vec!["api".to_string(), "grpc".to_string()],
                 },

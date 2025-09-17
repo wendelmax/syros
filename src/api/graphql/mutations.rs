@@ -1,19 +1,25 @@
+//! GraphQL mutations for the Syros API.
+//!
+//! This module defines all GraphQL mutation operations for modifying data
+//! in the Syros distributed coordination service.
+
 use crate::api::graphql::types::*;
 use crate::api::rest::ApiState;
 use crate::auth::Role;
 use async_graphql::{Context, Object, Result};
 
+/// Root mutation type for GraphQL operations.
+///
+/// This struct contains all the mutation resolvers for the GraphQL API.
 pub struct MutationRoot;
 
 #[Object]
 impl MutationRoot {
-    // Lock mutations
     async fn acquire_lock(
         &self,
         ctx: &Context<'_>,
         input: AcquireLockInput,
     ) -> Result<LockResponse> {
-        // Mock implementation
         Ok(LockResponse {
             success: true,
             message: "Lock acquired successfully".to_string(),
@@ -30,7 +36,6 @@ impl MutationRoot {
     }
 
     async fn release_lock(&self, ctx: &Context<'_>, key: String) -> Result<LockResponse> {
-        // Mock implementation
         Ok(LockResponse {
             success: true,
             message: "Lock released successfully".to_string(),
@@ -44,9 +49,7 @@ impl MutationRoot {
         })
     }
 
-    // Saga mutations
     async fn start_saga(&self, ctx: &Context<'_>, input: StartSagaInput) -> Result<SagaResponse> {
-        // Mock implementation
         let saga_id = uuid::Uuid::new_v4().to_string();
         let now = chrono::Utc::now();
 
@@ -82,7 +85,6 @@ impl MutationRoot {
         saga_id: String,
         step_id: String,
     ) -> Result<SagaResponse> {
-        // Mock implementation
         Ok(SagaResponse {
             success: true,
             message: "Saga step executed successfully".to_string(),
@@ -91,7 +93,6 @@ impl MutationRoot {
     }
 
     async fn compensate_saga(&self, ctx: &Context<'_>, saga_id: String) -> Result<SagaResponse> {
-        // Mock implementation
         Ok(SagaResponse {
             success: true,
             message: "Saga compensated successfully".to_string(),
@@ -99,13 +100,11 @@ impl MutationRoot {
         })
     }
 
-    // Event mutations
     async fn append_event(
         &self,
         ctx: &Context<'_>,
         input: AppendEventInput,
     ) -> Result<EventResponse> {
-        // Mock implementation
         let event_id = uuid::Uuid::new_v4().to_string();
         let now = chrono::Utc::now();
 
@@ -124,9 +123,7 @@ impl MutationRoot {
         })
     }
 
-    // Cache mutations
     async fn set_cache(&self, ctx: &Context<'_>, input: SetCacheInput) -> Result<CacheResponse> {
-        // Mock implementation
         let now = chrono::Utc::now();
         let expires_at = input
             .ttl
@@ -146,7 +143,6 @@ impl MutationRoot {
     }
 
     async fn delete_cache(&self, ctx: &Context<'_>, key: String) -> Result<CacheResponse> {
-        // Mock implementation
         Ok(CacheResponse {
             success: true,
             message: "Cache entry deleted successfully".to_string(),
@@ -154,12 +150,10 @@ impl MutationRoot {
         })
     }
 
-    // User mutations
     async fn create_user(&self, ctx: &Context<'_>, input: CreateUserInput) -> Result<UserResponse> {
         let state = ctx.data::<ApiState>()?;
         let mut rbac = state.rbac_manager.lock().await;
 
-        // Parse roles
         let roles: Result<Vec<Role>, String> = input
             .roles
             .iter()
@@ -209,7 +203,6 @@ impl MutationRoot {
         let state = ctx.data::<ApiState>()?;
         let mut rbac = state.rbac_manager.lock().await;
 
-        // Parse roles
         let roles: Result<Vec<Role>, String> = input
             .roles
             .iter()

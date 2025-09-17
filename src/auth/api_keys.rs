@@ -76,7 +76,6 @@ impl ApiKeyManager {
             usage_count: 0,
         };
 
-        // Store the API key
         {
             let mut keys = self.keys.write().await;
             let mut key_to_id = self.key_to_id.write().await;
@@ -102,7 +101,6 @@ impl ApiKeyManager {
 
         if let Some(id) = key_to_id.get(key) {
             if let Some(api_key) = keys.get(id) {
-                // Check if key is active and not expired
                 if api_key.is_active {
                     if let Some(expires_at) = api_key.expires_at {
                         if Utc::now() > expires_at {
@@ -110,7 +108,6 @@ impl ApiKeyManager {
                         }
                     }
 
-                    // Update usage statistics
                     let mut keys = self.keys.write().await;
                     if let Some(api_key) = keys.get_mut(id) {
                         api_key.last_used_at = Some(Utc::now());

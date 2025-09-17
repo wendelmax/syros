@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © Syros 2024")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("C# SDK for Syros - Distributed Coordination Service")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7256ae26a6bf1c6e0968f2792236bcf521d4f849")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21dbb75f29d04611ea5bab17153ce26523dc79b3")]
 [assembly: System.Reflection.AssemblyProductAttribute("Syros C# SDK")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SyrosSDK")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -4,7 +4,6 @@ use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Permission {
-    // Lock permissions
     LockCreate,
     LockRead,
     LockUpdate,
@@ -12,7 +11,6 @@ pub enum Permission {
     LockAcquire,
     LockRelease,
 
-    // Saga permissions
     SagaCreate,
     SagaRead,
     SagaUpdate,
@@ -20,27 +18,23 @@ pub enum Permission {
     SagaExecute,
     SagaCompensate,
 
-    // Event permissions
     EventCreate,
     EventRead,
     EventUpdate,
     EventDelete,
     EventQuery,
 
-    // Cache permissions
     CacheCreate,
     CacheRead,
     CacheUpdate,
     CacheDelete,
     CacheClear,
 
-    // Admin permissions
     AdminUsers,
     AdminRoles,
     AdminPermissions,
     AdminSystem,
 
-    // API permissions
     ApiRest,
     ApiGrpc,
     ApiWebSocket,
@@ -206,7 +200,6 @@ impl RBACManager {
             resources: HashMap::new(),
         };
 
-        // Initialize default roles
         rbac.initialize_default_roles();
         rbac
     }
@@ -286,7 +279,6 @@ impl RBACManager {
             user.roles = roles.clone();
             user.updated_at = chrono::Utc::now();
 
-            // Update permissions based on roles
             let mut permissions = Vec::new();
             for role in &roles {
                 permissions.extend(role.get_permissions());
@@ -335,12 +327,10 @@ impl RBACManager {
                 return Ok(false);
             }
 
-            // Check direct permissions
             if user.permissions.contains(permission) {
                 return Ok(true);
             }
 
-            // Check role permissions
             for role in &user.roles {
                 if role.get_permissions().contains(permission) {
                     return Ok(true);
@@ -359,19 +349,15 @@ impl RBACManager {
         resource_id: &str,
         permission: &Permission,
     ) -> Result<bool> {
-        // First check general permission
         if !self.check_permission(user_id, permission).await? {
             return Ok(false);
         }
 
-        // Check resource-specific permissions
         if let Some(resource) = self.resources.get(resource_id) {
-            // Check if user owns the resource
             if resource.owner_id == user_id {
                 return Ok(true);
             }
 
-            // Check if user has permission for this resource type
             if let Some(user) = self.users.get(user_id) {
                 for role in &user.roles {
                     if role.get_permissions().contains(permission) {

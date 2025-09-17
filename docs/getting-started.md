@@ -208,7 +208,7 @@ cargo test -- --nocapture
 docker-compose up -d
 
 # Check logs
-docker-compose logs -f syros-platform
+docker-compose logs -f syros
 
 # Stop
 docker-compose down
@@ -218,10 +218,10 @@ docker-compose down
 
 ```bash
 # Build image
-docker build -t syros-platform .
+docker build -t syros .
 
 # Run container
-docker run -p 8080:8080 -p 9090:9090 syros-platform
+docker run -p 8080:8080 -p 9090:9090 syros
 ```
 
 ## Next Steps
@@ -245,7 +245,7 @@ netstat -tulpn | grep :8080
 sudo kill -9 $(lsof -t -i:8080)
 
 # Kill process (Windows)
-taskkill /F /IM syros-platform.exe
+taskkill /F /IM syros.exe
 ```
 
 ### Redis/PostgreSQL connection error

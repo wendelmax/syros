@@ -36,7 +36,7 @@ jobs:
           
           ### Docker
           ```bash
-          docker pull ghcr.io/seu-usuario/syros-platform:${{ github.ref_name }}
+          docker pull ghcr.io/seu-usuario/syros:${{ github.ref_name }}
           ```
           
           ### Binary
@@ -44,8 +44,8 @@ jobs:
           
           ### Helm Chart
           ```bash
-          helm repo add syros https://seu-usuario.github.io/syros-platform
-          helm install syros-platform syros/syros-platform --version ${{ github.ref_name }}
+          helm repo add syros https://seu-usuario.github.io/syros
+          helm install syros syros/syros --version ${{ github.ref_name }}
           ```
 
   build-binaries:
@@ -57,19 +57,19 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            name: syros-platform-linux-x86_64
+            name: syros-linux-x86_64
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
-            name: syros-platform-linux-aarch64
+            name: syros-linux-aarch64
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            name: syros-platform-windows-x86_64.exe
+            name: syros-windows-x86_64.exe
           - os: macos-latest
             target: x86_64-apple-darwin
-            name: syros-platform-macos-x86_64
+            name: syros-macos-x86_64
           - os: macos-latest
             target: aarch64-apple-darwin
-            name: syros-platform-macos-aarch64
+            name: syros-macos-aarch64
 
     steps:
     - uses: actions/checkout@v4
@@ -105,9 +105,9 @@ jobs:
       shell: bash
       run: |
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
-          cp target/${{ matrix.target }}/release/syros-platform.exe ${{ matrix.name }}
+          cp target/${{ matrix.target }}/release/syros.exe ${{ matrix.name }}
         else
-          cp target/${{ matrix.target }}/release/syros-platform ${{ matrix.name }}
+          cp target/${{ matrix.target }}/release/syros ${{ matrix.name }}
         fi
 
     - name: Upload Release Asset
@@ -139,7 +139,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ghcr.io/${{ github.repository_owner }}/syros-platform
+        images: ghcr.io/${{ github.repository_owner }}/syros
         tags: |
           type=ref,event=tag
           type=semver,pattern={{version}}
@@ -171,14 +171,14 @@ jobs:
     
     - name: Package Helm Chart
       run: |
-        helm package helm/syros-platform --version ${{ github.ref_name }} --app-version ${{ github.ref_name }}
+        helm package helm/syros --version ${{ github.ref_name }} --app-version ${{ github.ref_name }}
     
     - name: Upload Helm Chart
       uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        files: ./syros-platform-${{ github.ref_name }}.tgz
+        files: ./syros-${{ github.ref_name }}.tgz
         tag_name: ${{ github.ref }}
 
   update-homebrew:
@@ -189,10 +189,10 @@ jobs:
     - name: Update Homebrew Formula
       uses: mislav/bump-homebrew-formula-action@v2
       with:
-        formula-name: syros-platform
+        formula-name: syros
         homebrew-tap: ${{ github.repository_owner }}/homebrew-tap
         base-branch: main
-        download-url: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/syros-platform-macos-x86_64
+        download-url: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/syros-macos-x86_64
       env:
         COMMITTER_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
@@ -211,8 +211,8 @@ jobs:
           🚀 Syros ${{ github.ref_name }} has been released!
           
           📦 Binaries: Available for Linux, macOS, and Windows
-          🐳 Docker: `ghcr.io/${{ github.repository_owner }}/syros-platform:${{ github.ref_name }}`
-          ⚡ Helm: `helm install syros-platform oci://ghcr.io/${{ github.repository_owner }}/charts/syros-platform --version ${{ github.ref_name }}`
+          🐳 Docker: `ghcr.io/${{ github.repository_owner }}/syros:${{ github.ref_name }}`
+          ⚡ Helm: `helm install syros oci://ghcr.io/${{ github.repository_owner }}/charts/syros --version ${{ github.ref_name }}`
           
           View release: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
       env:

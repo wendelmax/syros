@@ -12,12 +12,10 @@ use std::time::Instant;
 
 #[derive(Clone)]
 pub struct Metrics {
-    // Contadores de requisições
     pub http_requests_total: CounterVec,
     pub grpc_requests_total: CounterVec,
     pub websocket_connections_total: Counter,
 
-    // Contadores de operações
     pub locks_acquired_total: Counter,
     pub locks_released_total: Counter,
     pub sagas_started_total: Counter,
@@ -27,20 +25,17 @@ pub struct Metrics {
     pub cache_hits_total: Counter,
     pub cache_misses_total: Counter,
 
-    // Histogramas de latência
     pub http_request_duration: HistogramVec,
     pub grpc_request_duration: HistogramVec,
     pub lock_operation_duration: HistogramVec,
     pub saga_execution_duration: Histogram,
     pub cache_operation_duration: HistogramVec,
 
-    // Gauges de estado
     pub active_locks: Gauge,
     pub active_sagas: Gauge,
     pub cache_size: Gauge,
     pub websocket_connections: Gauge,
 
-    // Registry
     pub registry: Arc<Registry>,
 }
 
@@ -48,7 +43,6 @@ impl Metrics {
     pub fn new() -> Result<Self, prometheus::Error> {
         let registry = Arc::new(Registry::new());
 
-        // Contadores de requisições
         let http_requests_total = CounterVec::new(
             Opts::new("http_requests_total", "Total HTTP requests"),
             &["method", "endpoint", "status"],
@@ -62,7 +56,6 @@ impl Metrics {
         let websocket_connections_total =
             Counter::new("websocket_connections_total", "Total WebSocket connections")?;
 
-        // Contadores de operações
         let locks_acquired_total = Counter::new("locks_acquired_total", "Total locks acquired")?;
 
         let locks_released_total = Counter::new("locks_released_total", "Total locks released")?;
@@ -78,8 +71,6 @@ impl Metrics {
         let cache_hits_total = Counter::new("cache_hits_total", "Total cache hits")?;
 
         let cache_misses_total = Counter::new("cache_misses_total", "Total cache misses")?;
-
-        // Histogramas de latência
         let http_request_duration = HistogramVec::new(
             HistogramOpts::new("http_request_duration_seconds", "HTTP request duration").buckets(
                 vec![
@@ -118,7 +109,6 @@ impl Metrics {
             &["operation"],
         )?;
 
-        // Gauges de estado
         let active_locks = Gauge::new("active_locks", "Number of active locks")?;
         let active_sagas = Gauge::new("active_sagas", "Number of active sagas")?;
         let cache_size = Gauge::new("cache_size", "Number of items in cache")?;
@@ -126,8 +116,6 @@ impl Metrics {
             "websocket_connections",
             "Number of active WebSocket connections",
         )?;
-
-        // Registrar métricas
         registry.register(Box::new(http_requests_total.clone()))?;
         registry.register(Box::new(grpc_requests_total.clone()))?;
         registry.register(Box::new(websocket_connections_total.clone()))?;

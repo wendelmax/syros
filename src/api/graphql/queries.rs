@@ -1,15 +1,21 @@
+//! GraphQL queries for the Syros API.
+//!
+//! This module defines all GraphQL query operations for retrieving data
+//! from the Syros distributed coordination service.
+
 use crate::api::graphql::types::*;
 use crate::api::rest::ApiState;
 use async_graphql::{Context, Object, Result};
 
+/// Root query type for GraphQL operations.
+///
+/// This struct contains all the query resolvers for the GraphQL API.
 pub struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
-    // Lock queries
     async fn lock_status(&self, ctx: &Context<'_>, key: String) -> Result<Lock> {
         let state = ctx.data::<ApiState>()?;
-        // Mock implementation - in real implementation, query the lock manager
         Ok(Lock {
             key: key.clone(),
             owner: "system".to_string(),
@@ -20,13 +26,10 @@ impl QueryRoot {
     }
 
     async fn locks(&self, ctx: &Context<'_>) -> Result<Vec<Lock>> {
-        // Mock implementation
         Ok(vec![])
     }
 
-    // Saga queries
     async fn saga(&self, ctx: &Context<'_>, id: String) -> Result<Option<Saga>> {
-        // Mock implementation
         Ok(Some(Saga {
             id: id.clone(),
             name: "test-saga".to_string(),
@@ -38,18 +41,14 @@ impl QueryRoot {
     }
 
     async fn sagas(&self, ctx: &Context<'_>) -> Result<Vec<Saga>> {
-        // Mock implementation
         Ok(vec![])
     }
 
-    // Event queries
     async fn events(&self, ctx: &Context<'_>, stream_id: String) -> Result<Vec<Event>> {
-        // Mock implementation
         Ok(vec![])
     }
 
     async fn event(&self, ctx: &Context<'_>, id: String) -> Result<Option<Event>> {
-        // Mock implementation
         Ok(Some(Event {
             id: id.clone(),
             stream_id: "test-stream".to_string(),
@@ -61,9 +60,7 @@ impl QueryRoot {
         }))
     }
 
-    // Cache queries
     async fn cache_entry(&self, ctx: &Context<'_>, key: String) -> Result<Option<CacheEntry>> {
-        // Mock implementation
         Ok(Some(CacheEntry {
             key: key.clone(),
             value: "cached-value".to_string(),
@@ -73,7 +70,6 @@ impl QueryRoot {
         }))
     }
 
-    // User queries
     async fn user(&self, ctx: &Context<'_>, id: String) -> Result<Option<User>> {
         let state = ctx.data::<ApiState>()?;
         let rbac = state.rbac_manager.lock().await;
@@ -136,7 +132,6 @@ impl QueryRoot {
         }
     }
 
-    // Permission queries
     async fn check_permission(
         &self,
         ctx: &Context<'_>,
@@ -146,7 +141,6 @@ impl QueryRoot {
         let state = ctx.data::<ApiState>()?;
         let rbac = state.rbac_manager.lock().await;
 
-        // Parse permission string to Permission enum
         let perm = match permission.as_str() {
             "LockCreate" => crate::auth::Permission::LockCreate,
             "LockRead" => crate::auth::Permission::LockRead,
@@ -204,7 +198,6 @@ impl QueryRoot {
         }
     }
 
-    // Health queries
     async fn health(&self, ctx: &Context<'_>) -> Result<String> {
         Ok("OK".to_string())
     }

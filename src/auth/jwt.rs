@@ -24,7 +24,7 @@ impl Claims {
             sub: user_id,
             exp: now + (expiration_hours * 3600) as usize,
             iat: now,
-            iss: "syros-platform".to_string(),
+            iss: "syros".to_string(),
             aud: "syros-api".to_string(),
             role,
         }
@@ -44,7 +44,7 @@ impl JwtAuth {
         let decoding_key = DecodingKey::from_secret(secret.as_ref());
 
         let mut validation = Validation::new(Algorithm::HS256);
-        validation.set_issuer(&["syros-platform"]);
+        validation.set_issuer(&["syros"]);
         validation.set_audience(&["syros-api"]);
 
         Self {
@@ -91,17 +91,15 @@ mod tests {
         let user_id = "test-user-123".to_string();
         let role = "admin".to_string();
 
-        // Generate token
         let token = jwt_auth
             .generate_token(user_id.clone(), role.clone(), 1)
             .unwrap();
         assert!(!token.is_empty());
 
-        // Validate token
         let claims = jwt_auth.validate_token(&token).unwrap();
         assert_eq!(claims.sub, user_id);
         assert_eq!(claims.role, role);
-        assert_eq!(claims.iss, "syros-platform");
+        assert_eq!(claims.iss, "syros");
         assert_eq!(claims.aud, "syros-api");
     }
 
