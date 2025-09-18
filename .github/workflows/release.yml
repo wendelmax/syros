@@ -48,9 +48,81 @@ jobs:
           helm install syros syros/syros --version ${{ github.ref_name }}
           ```
 
+  validate:
+    name: Validate Code Quality
+    runs-on: ubuntu-latest
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+      postgres:
+        image: postgres:15-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: syros_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy, rustfmt, llvm-tools-preview
+
+    - name: Cache cargo
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pkg-config libssl-dev libpq-dev
+
+    - name: Check formatting
+      run: cargo fmt --all -- --check
+
+    - name: Run clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
+
+    - name: Check documentation
+      run: cargo doc --no-deps --all-features
+
+    - name: Run tests
+      env:
+        REDIS_URL: redis://localhost:6379
+        DATABASE_URL: postgresql://postgres:password@localhost:5432/syros_test
+        JWT_SECRET: test-secret-key
+        API_KEY_ENCRYPTION_KEY: test-encryption-key
+      run: cargo test --all-features --verbose
+
+    - name: Run integration tests
+      env:
+        REDIS_URL: redis://localhost:6379
+        DATABASE_URL: postgresql://postgres:password@localhost:5432/syros_test
+        JWT_SECRET: test-secret-key
+        API_KEY_ENCRYPTION_KEY: test-encryption-key
+      run: cargo test --test integration --verbose
+
+    - name: Run benchmarks
+      env:
+        REDIS_URL: redis://localhost:6379
+      run: cargo bench --verbose
+
   build-binaries:
     name: Build Binaries
-    needs: create-release
+    needs: [create-release, validate]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -120,7 +192,7 @@ jobs:
 
   build-docker:
     name: Build and Push Docker Images
-    needs: create-release
+    needs: [create-release, validate]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -159,7 +231,7 @@ jobs:
 
   build-helm-chart:
     name: Build and Publish Helm Chart
-    needs: create-release
+    needs: [create-release, validate]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

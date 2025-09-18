@@ -93,6 +93,9 @@ jobs:
     - name: Run clippy
       run: cargo clippy --all-targets --all-features -- -D warnings
 
+    - name: Check documentation
+      run: cargo doc --no-deps --all-features
+
     - name: Run tests
       env:
         REDIS_URL: redis://localhost:6379
