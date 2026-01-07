@@ -6,7 +6,7 @@
 use crate::api::graphql::{mutations::MutationRoot, queries::QueryRoot};
 use crate::api::rest::ApiState;
 use async_graphql::{EmptySubscription, Schema};
-use axum::{extract::State, response::Html, response::Json};
+use axum::{extract::State, response::Html, Json};
 use serde_json::Value;
 
 /// Type alias for the Syros GraphQL schema.

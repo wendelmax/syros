@@ -15,9 +15,8 @@ use tokio::net::TcpListener;
 use tokio::task::JoinHandle;
 use uuid::Uuid;
 
-use syros_platform::{
-    api::rest::ApiState,
-    api::websocket::WebSocketService,
+use syros::{
+    api::rest::{ApiState, WebSocketService},
     auth::{AuthMiddleware, RBACManager},
     config::Config,
     core::{
@@ -25,6 +24,7 @@ use syros_platform::{
         saga_orchestrator::SagaOrchestrator,
     },
     metrics::Metrics,
+    storage::{postgres::PostgresManager, redis::RedisManager},
 };
 
 /// Mock server configuration
@@ -96,42 +96,48 @@ impl MockServer {
 
     /// Start REST API mock server
     async fn start_rest_mock(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        let lock_manager = LockManager::new();
-        let saga_orchestrator = SagaOrchestrator::new();
-        let event_store = EventStore::new();
+        let config = Config::load().unwrap_or_else(|_| Config::default());
+        
+        // Use separate URLs for mock server if needed, but here we assume env vars or defaults
+        let redis_manager = RedisManager::new(&config.storage.redis.url);
+        let postgres_manager = PostgresManager::new("postgres://localhost:5432/syros", 10).await.unwrap();
+
+        let lock_manager = LockManager::new(redis_manager.clone());
+        let saga_orchestrator = SagaOrchestrator::new(postgres_manager.clone());
+        let event_store = EventStore::new(postgres_manager.clone());
         let cache_manager = CacheManager::new();
 
         let app_state = Arc::new(ApiState {
             config: Config::load().unwrap_or_else(|_| Config {
-                server: syros_platform::config::ServerConfig {
+                server: syros::config::ServerConfig {
                     port: 8080,
                     grpc_port: 8081,
                     websocket_port: 8082,
                     host: "127.0.0.1".to_string(),
                 },
-                storage: syros_platform::config::StorageConfig {
-                    redis: syros_platform::config::RedisConfig {
+                storage: syros::config::StorageConfig {
+                    redis: syros::config::RedisConfig {
                         url: "redis://localhost:6379".to_string(),
                         pool_size: 10,
                         timeout_seconds: 30,
                     },
-                    database: syros_platform::config::DatabaseConfig {
+                    database: syros::config::DatabaseConfig {
                         url: "postgres://localhost:5432/syros".to_string(),
                         pool_size: 10,
                         timeout_seconds: 30,
                     },
                 },
-                security: syros_platform::config::SecurityConfig {
+                security: syros::config::SecurityConfig {
                     jwt_secret: "test_secret".to_string(),
                     api_key_encryption_key: "test_encryption_key".to_string(),
                     cors_origins: vec!["*".to_string()],
                 },
-                logging: syros_platform::config::LoggingConfig {
+                logging: syros::config::LoggingConfig {
                     level: "info".to_string(),
                     format: "json".to_string(),
                     output: "stdout".to_string(),
                 },
-                service_discovery: syros_platform::config::ServiceDiscoveryConfig {
+                service_discovery: syros::config::ServiceDiscoveryConfig {
                     enabled: true,
                     consul_url: "http://localhost:8500".to_string(),
                     service_name: "syros".to_string(),

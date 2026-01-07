@@ -22,7 +22,7 @@ fn bench_cache_set(c: &mut Criterion) {
                 ttl: Some(black_box(std::time::Duration::from_secs(60))),
                 tags: black_box(vec!["benchmark".to_string()]),
             };
-            
+
             let _ = cache_manager.set(request).await;
         })
     });
@@ -48,7 +48,7 @@ fn bench_cache_delete(c: &mut Criterion) {
             let request = DeleteCacheRequest {
                 key: black_box("benchmark-key".to_string()),
             };
-            
+
             let _ = cache_manager.delete(request).await;
         })
     });
@@ -69,12 +69,18 @@ fn bench_cache_set_and_get(c: &mut Criterion) {
                 ttl: Some(black_box(std::time::Duration::from_secs(60))),
                 tags: black_box(vec!["benchmark".to_string()]),
             };
-            
+
             let _ = cache_manager.set(set_request).await;
             let _ = cache_manager.get(black_box("benchmark-key")).await;
         })
     });
 }
 
-criterion_group!(cache_benches, bench_cache_set, bench_cache_get, bench_cache_delete, bench_cache_set_and_get);
+criterion_group!(
+    cache_benches,
+    bench_cache_set,
+    bench_cache_get,
+    bench_cache_delete,
+    bench_cache_set_and_get
+);
 criterion_main!(cache_benches);

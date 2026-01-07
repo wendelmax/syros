@@ -4,8 +4,6 @@
 
 ## Project Status
 
-**PROJECT 100% IMPLEMENTED AND FUNCTIONAL!**
-
 ### Implemented Components
 
 - **Core Engine**: Lock Manager, Saga Orchestrator, Event Store, Cache Manager
@@ -13,14 +11,26 @@
 - **gRPC API**: Complete gRPC services with Volo
 - **WebSocket**: Real-time WebSocket connection support
 - **Flexible Server**: Server selection and IP configuration
-- **Configuration**: Flexible configuration system
-- **Error Handling**: Robust error handling system
-- **Observability**: Prometheus metrics and tracing
-- **Security**: JWT and API Keys
-- **SDKs**: SDKs for Python, Node.js, Java, C#, and Go
-- **Docker**: Complete deployment configuration
-- **CI/CD**: GitHub Actions pipelines
-- **Tests**: Functional test client
+- **Configuration**: Flexible configuration system using environment variables or TOML
+- **Error Handling**: Robust error handling with descriptive codes
+- **Observability**: Built-in Prometheus metrics and structured logging
+- **Security**: JWT-based authentication and API Key authorization
+- **SDKs**: Native SDKs for Python, Node.js, Java, C#, and Go
+- **Infrastructure**: Ready-to-use Docker and Kubernetes (Helm) configurations
+
+## Key Features
+
+### Distributed Lock Manager
+Syros provides a high-performance, distributed lock manager using Redis as the backend. It supports lock acquisition with TTL, wait timeouts, and ownership verification, ensuring mutual exclusion across a cluster of services.
+
+### Saga Orchestrator
+Implement complex distributed transactions using the Saga pattern. Syros manages step execution, retries with customizable backoff strategies, and automatic compensation logic (rollback) if a step fails, maintaining eventual consistency in your microservices.
+
+### Event Store
+A persistent event sourcing engine powered by PostgreSQL. Append events to streams, retrieve event history with versioning, and build reactive systems by replaying events. Includes support for metadata and automatic versioning.
+
+### Distributed Cache
+A fast, tag-based distributed cache. Optimize your system by caching expensive computations, with support for TTL-based expiration and bulk invalidation by tags.
 
 ## Platform Architecture
 
@@ -280,20 +290,93 @@ Complete documentation is available in the [`docs/`](docs/) folder:
 - **[Deployment](docs/deployment.md)** - Deployment guides
 - **[FAQ](docs/faq.md)** - Frequently asked questions
 
+### Prerequisites
+
+-   **Rust**: Stable 1.70+
+-   **Docker & Docker Compose**: For backing services
+-   **Services**: Redis (Locks/Cache) and PostgreSQL (Saga/Events)
+
 ### Quick Start
 
+The fastest way to get Syros running with all its dependencies is via Docker Compose:
+
 ```bash
-# 1. Clone and build
+# 1. Clone the repository
 git clone https://github.com/wendelmax/syros.git
 cd syros
-cargo build --release
 
-# 2. Start the server
-cargo run
+# 2. Build and start all services
+docker-compose up -d --build
+```
 
-# 3. Test the API
+Access the health check to verify everything is working:
+```bash
 curl http://localhost:8080/health
 ```
+
+### Usage Examples
+
+#### Acquire a Distributed Lock
+```bash
+curl -X POST http://localhost:8080/api/v1/locks \
+  -H "Content-Type: application/json" \
+  -d '{
+    "key": "inventory_process_123",
+    "owner": "worker_service_01",
+    "ttl_seconds": 30
+  }'
+```
+
+#### Start a Distributed Saga
+```bash
+curl -X POST http://localhost:8080/api/v1/sagas \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "order_fulfillment_saga",
+    "steps": [
+      {
+        "name": "reserve_inventory",
+        "service": "inventory_service",
+        "action": "reserve",
+        "compensation": "release_inventory",
+        "timeout_seconds": 10
+      },
+      {
+        "name": "charge_payment",
+        "service": "payment_service",
+        "action": "charge",
+        "compensation": "refund_payment",
+        "timeout_seconds": 15
+      }
+    ]
+  }'
+```
+
+#### Append an Event to a Stream
+```bash
+curl -X POST http://localhost:8080/api/v1/events/order_stream_99 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_type": "OrderCreated",
+    "data": { "customer_id": "user_456", "total": 129.90 },
+    "metadata": { "source": "mobile_app" }
+  }'
+```
+
+## Configuration
+
+Syros can be configured via environment variables or a `config.toml` file.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | `postgres://syros:syros@localhost:5432/syros` |
+| `REDIS_URL` | Redis connection string | `redis://localhost:6379` |
+| `SERVER_HOST` | Host interface to bind to | `0.0.0.0` |
+| `REST_PORT` | Port for the REST API | `8080` |
+| `GRPC_PORT` | Port for the gRPC API | `9090` |
+| `WS_PORT` | Port for the WebSocket API | `8081` |
+| `JWT_SECRET` | Secret key for JWT generation | `syros-secret-key-change-me` |
+| `LOG_LEVEL` | Logging level (info, debug, error) | `info` |
 
 ### Available APIs
 
@@ -319,7 +402,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Rust](https://www.rust-lang.org/) - Programming language
 - [Tokio](https://tokio.rs/) - Async runtime
 - [Axum](https://github.com/tokio-rs/axum) - Web framework
-- [Tonic](https://github.com/hyperium/tonic) - gRPC framework
+- [Volo](https://github.com/cloudwego/volo) - gRPC framework
 - [Redis](https://redis.io/) - Cache and locks
 - [PostgreSQL](https://www.postgresql.org/) - Database
 - [Prometheus](https://prometheus.io/) - Metrics

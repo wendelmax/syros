@@ -10,6 +10,7 @@ use crate::core::saga_orchestrator::{
 use axum::{
     extract::{Path, State},
     http::StatusCode,
+    response::IntoResponse,
     Json,
 };
 use serde::{Deserialize, Serialize};
@@ -54,7 +55,7 @@ pub struct RetryPolicyRequest {
 }
 
 /// Response structure for saga status information.
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct SagaStatusResponse {
     /// Unique identifier of the saga
     pub saga_id: String,
@@ -88,7 +89,7 @@ pub struct SagaStatusResponse {
 pub async fn start_saga(
     State(state): State<ApiState>,
     Json(request): Json<StartSagaRequest>,
-) -> Result<Json<SagaResponse>, StatusCode> {
+) -> impl IntoResponse {
     let steps: Vec<SagaStep> = request
         .steps
         .into_iter()
@@ -123,10 +124,10 @@ pub async fn start_saga(
     state.metrics.increment_sagas_started();
 
     match state.saga_orchestrator.start_saga(saga_request).await {
-        Ok(response) => Ok(Json(response)),
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error starting saga: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -147,39 +148,32 @@ pub async fn start_saga(
 pub async fn get_saga_status(
     State(state): State<ApiState>,
     Path(saga_id): Path<String>,
-) -> Result<Json<SagaStatusResponse>, StatusCode> {
+) -> impl IntoResponse {
     match state.saga_orchestrator.get_saga_status(&saga_id).await {
         Ok(Some(saga)) => {
-            let status = match saga.status {
-                crate::core::saga_orchestrator::SagaStatus::Pending => "pending",
-                crate::core::saga_orchestrator::SagaStatus::Running => "running",
-                crate::core::saga_orchestrator::SagaStatus::Completed => "completed",
-                crate::core::saga_orchestrator::SagaStatus::Failed => "failed",
-                crate::core::saga_orchestrator::SagaStatus::Compensating => "compensating",
-                crate::core::saga_orchestrator::SagaStatus::Compensated => "compensated",
-            }
-            .to_string();
+            let status = saga.status.clone();
 
-            let metadata = if saga.metadata.is_empty() {
+            let metadata = if saga.metadata.is_null() {
                 None
             } else {
-                Some(serde_json::to_value(saga.metadata).unwrap_or(serde_json::Value::Null))
+                Some(saga.metadata)
             };
 
-            Ok(Json(SagaStatusResponse {
+            Json(SagaStatusResponse {
                 saga_id: saga.id,
                 name: saga.name,
                 status,
-                current_step_index: saga.current_step,
+                current_step_index: saga.current_step.map(|s| s as usize),
                 created_at: saga.created_at.to_rfc3339(),
                 updated_at: saga.updated_at.to_rfc3339(),
                 metadata,
-            }))
+            })
+            .into_response()
         }
-        Ok(None) => Err(StatusCode::NOT_FOUND),
+        Ok(None) => StatusCode::NOT_FOUND.into_response(),
         Err(e) => {
             eprintln!("Error getting saga status: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }

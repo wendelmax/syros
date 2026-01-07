@@ -1,4 +1,4 @@
-FROM rust:1.75-slim as builder
+FROM rust:slim as builder
 
 WORKDIR /app
 
@@ -6,11 +6,15 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     libssl-dev \
     libpq-dev \
+    protobuf-compiler \
     && rm -rf /var/lib/apt/lists/*
 
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
 COPY src ./src
 COPY config ./config
+COPY benches ./benches
+COPY proto ./proto
+COPY build.rs ./
 
 RUN cargo build --release
 

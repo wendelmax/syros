@@ -10,6 +10,7 @@ use crate::core::cache_manager::{
 use axum::{
     extract::{Path, State},
     http::StatusCode,
+    response::IntoResponse,
     Json,
 };
 use serde::{Deserialize, Serialize};
@@ -33,7 +34,7 @@ pub struct InvalidateByTagRequestPayload {
 }
 
 /// Response structure for cache statistics.
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct CacheStatsResponse {
     /// Total number of cache entries
     pub total_entries: usize,
@@ -59,12 +60,12 @@ pub struct CacheStatsResponse {
 pub async fn get_cache(
     State(cache_manager): State<CacheManager>,
     Path(key): Path<String>,
-) -> Result<Json<CacheResponse>, StatusCode> {
+) -> impl IntoResponse {
     match cache_manager.get(&key).await {
-        Ok(response) => Ok(Json(response)),
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error getting cache: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -87,7 +88,7 @@ pub async fn set_cache(
     State(cache_manager): State<CacheManager>,
     Path(key): Path<String>,
     Json(request): Json<SetCacheRequest>,
-) -> Result<Json<CacheResponse>, StatusCode> {
+) -> impl IntoResponse {
     let cache_request = CacheRequest {
         key,
         value: request.value,
@@ -96,10 +97,10 @@ pub async fn set_cache(
     };
 
     match cache_manager.set(cache_request).await {
-        Ok(response) => Ok(Json(response)),
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error setting cache: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -119,14 +120,14 @@ pub async fn set_cache(
 pub async fn delete_cache(
     State(cache_manager): State<CacheManager>,
     Path(key): Path<String>,
-) -> Result<Json<DeleteCacheResponse>, StatusCode> {
+) -> impl IntoResponse {
     let delete_request = DeleteCacheRequest { key };
 
     match cache_manager.delete(delete_request).await {
-        Ok(response) => Ok(Json(response)),
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error deleting cache: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -146,14 +147,14 @@ pub async fn delete_cache(
 pub async fn invalidate_by_tag(
     State(cache_manager): State<CacheManager>,
     Path(tag): Path<String>,
-) -> Result<Json<InvalidateByTagResponse>, StatusCode> {
+) -> impl IntoResponse {
     let invalidate_request = InvalidateByTagRequest { tag };
 
     match cache_manager.invalidate_by_tag(invalidate_request).await {
-        Ok(response) => Ok(Json(response)),
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error invalidating cache by tag: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -172,16 +173,17 @@ pub async fn invalidate_by_tag(
 /// Returns a JSON response with cache statistics.
 pub async fn get_cache_stats(
     State(cache_manager): State<CacheManager>,
-) -> Result<Json<CacheStatsResponse>, StatusCode> {
+) -> impl IntoResponse {
     match cache_manager.get_stats().await {
-        Ok(stats) => Ok(Json(CacheStatsResponse {
+        Ok(stats) => Json(CacheStatsResponse {
             total_entries: stats.total_entries,
             expired_entries: stats.expired_entries,
             active_entries: stats.active_entries,
-        })),
+        })
+        .into_response(),
         Err(e) => {
             eprintln!("Error getting cache statistics: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }

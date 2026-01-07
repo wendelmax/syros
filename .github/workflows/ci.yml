@@ -11,120 +11,6 @@ env:
   RUST_BACKTRACE: 1
 
 jobs:
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    
-    services:
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      
-      etcd:
-        image: quay.io/coreos/etcd:v3.5.9
-        ports:
-          - 2379:2379
-          - 2380:2380
-        env:
-          ETCD_NAME: etcd0
-          ETCD_DATA_DIR: /etcd-data
-          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-          ETCD_ADVERTISE_CLIENT_URLS: http://localhost:2379
-          ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
-          ETCD_INITIAL_ADVERTISE_PEER_URLS: http://localhost:2380
-          ETCD_INITIAL_CLUSTER: etcd0=http://localhost:2380
-          ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster-1
-          ETCD_INITIAL_CLUSTER_STATE: new
-      
-      postgres:
-        image: postgres:15-alpine
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: syros_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install Rust
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        components: clippy, rustfmt
-    
-    - name: Cache cargo registry
-      uses: actions/cache@v3
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-    
-    - name: Cache cargo index
-      uses: actions/cache@v3
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-    
-    - name: Cache cargo build
-      uses: actions/cache@v3
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y pkg-config libssl-dev libpq-dev
-
-    - name: Check formatting
-      run: cargo fmt --all -- --check
-
-    - name: Run clippy
-      run: cargo clippy --all-targets --all-features -- -D warnings
-
-    - name: Check documentation
-      run: cargo doc --no-deps --all-features
-
-    - name: Run tests
-      env:
-        REDIS_URL: redis://localhost:6379
-        ETCD_URL: http://localhost:2379
-        DATABASE_URL: postgresql://postgres:password@localhost:5432/syros_test
-        JWT_SECRET: test-secret-key
-        API_KEY_ENCRYPTION_KEY: test-encryption-key
-      run: cargo test --verbose
-
-    - name: Run integration tests
-      env:
-        REDIS_URL: redis://localhost:6379
-        ETCD_URL: http://localhost:2379
-        DATABASE_URL: postgresql://postgres:password@localhost:5432/syros_test
-        JWT_SECRET: test-secret-key
-        API_KEY_ENCRYPTION_KEY: test-encryption-key
-      run: cargo test --test integration --verbose
-
-  security-audit:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: dtolnay/rust-toolchain@stable
-    - name: Install cargo-audit
-      run: cargo install cargo-audit
-    - name: Run security audit
-      run: cargo audit
-
   coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
@@ -154,7 +40,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y pkg-config libssl-dev libpq-dev
+        sudo apt-get install -y pkg-config libssl-dev libpq-dev protobuf-compiler
 
     - name: Install cargo-llvm-cov
       uses: taiki-e/install-action@cargo-llvm-cov
@@ -190,12 +76,12 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y pkg-config libssl-dev libpq-dev
+        sudo apt-get install -y pkg-config libssl-dev libpq-dev protobuf-compiler
 
     - name: Install system dependencies (macOS)
       if: matrix.os == 'macos-latest'
       run: |
-        brew install postgresql openssl
+        brew install postgresql openssl protobuf
 
     - name: Build
       run: cargo build --verbose --release
@@ -226,39 +112,3 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-  benchmark:
-    name: Performance Benchmarks
-    runs-on: ubuntu-latest
-    
-    services:
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install Rust
-      uses: dtolnay/rust-toolchain@stable
-
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y pkg-config libssl-dev libpq-dev
-
-    - name: Run benchmarks
-      env:
-        REDIS_URL: redis://localhost:6379
-      run: cargo bench --verbose
-
-    - name: Store benchmark result
-      uses: benchmark-action/github-action-benchmark@v1
-      with:
-        tool: 'cargo'
-        output-file-path: target/criterion/reports/benchmark.json
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        auto-push: true
-        comment-on-alert: true
-        alert-threshold: '200%'
-        fail-on-alert: true

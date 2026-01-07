@@ -49,7 +49,7 @@ pub async fn start_server(
     servers: Vec<ServerType>,
     interface: Option<String>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let config = Config::load().unwrap_or_else(|_| Config {
+    let mut config = Config::load().unwrap_or_else(|_| Config {
         server: crate::config::ServerConfig {
             port,
             grpc_port,
@@ -88,6 +88,14 @@ pub async fn start_server(
         },
     });
 
+    // Override with environment variables if present
+    if let Ok(url) = std::env::var("REDIS_URL") {
+        config.storage.redis.url = url;
+    }
+    if let Ok(url) = std::env::var("DATABASE_URL") {
+        config.storage.database.url = url;
+    }
+
     let should_start_rest =
         servers.contains(&ServerType::Rest) || servers.contains(&ServerType::All);
     let should_start_grpc =
@@ -119,9 +127,19 @@ pub async fn start_server(
         }
     }
 
-    let lock_manager = LockManager::new();
-    let saga_orchestrator = SagaOrchestrator::new();
-    let event_store = EventStore::new();
+    let redis_manager = crate::storage::redis::RedisManager::new(&config.storage.redis.url)
+        .map_err(|e| format!("Failed to initialize Redis Manager: {}", e))?;
+
+    let lock_manager = LockManager::new(redis_manager);
+    let pg_manager = crate::storage::postgres::PostgresManager::new(
+        &config.storage.database.url,
+        config.storage.database.pool_size,
+    )
+    .await
+    .map_err(|e| format!("Failed to initialize Postgres Manager: {}", e))?;
+
+    let saga_orchestrator = SagaOrchestrator::new(pg_manager.clone());
+    let event_store = EventStore::new(pg_manager);
     let cache_manager = CacheManager::new();
 
     if verbose {

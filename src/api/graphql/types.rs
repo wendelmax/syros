@@ -131,7 +131,6 @@ pub struct Permission {
     pub action: String,
 }
 
-
 /// Status of a distributed lock.
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
 pub enum LockStatus {
@@ -172,7 +171,6 @@ pub enum StepStatus {
     /// Step was compensated after failure
     Compensated,
 }
-
 
 /// Input for acquiring a distributed lock.
 #[derive(InputObject, Clone, Debug, Serialize, Deserialize)]
@@ -244,7 +242,6 @@ pub struct UpdateUserRolesInput {
     /// New list of roles
     pub roles: Vec<String>,
 }
-
 
 /// Response for lock operations.
 #[derive(SimpleObject, Clone, Debug, Serialize, Deserialize)]

@@ -3,9 +3,9 @@
 //! This module contains performance benchmarks for the Syros distributed lock system.
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use std::time::Duration;
 use syros::core::lock_manager::LockManager;
 use syros::core::lock_manager::{AcquireLockRequest, ReleaseLockRequest};
-use std::time::Duration;
 use tokio::runtime::Runtime;
 
 fn bench_lock_acquire(c: &mut Criterion) {
@@ -21,7 +21,7 @@ fn bench_lock_acquire(c: &mut Criterion) {
                 metadata: Some(black_box("benchmark-metadata".to_string())),
                 wait_timeout: Some(Duration::from_secs(1)),
             };
-            
+
             let _ = lock_manager.acquire_lock(request).await;
         })
     });
@@ -38,7 +38,7 @@ fn bench_lock_release(c: &mut Criterion) {
                 lock_id: black_box("benchmark-lock-id".to_string()),
                 owner: black_box("benchmark-owner".to_string()),
             };
-            
+
             let _ = lock_manager.release_lock(request).await;
         })
     });
@@ -57,19 +57,24 @@ fn bench_lock_acquire_and_release(c: &mut Criterion) {
                 metadata: Some(black_box("benchmark-metadata".to_string())),
                 wait_timeout: Some(Duration::from_secs(1)),
             };
-            
+
             if let Ok(acquire_response) = lock_manager.acquire_lock(acquire_request).await {
                 let release_request = ReleaseLockRequest {
                     key: black_box("benchmark-key".to_string()),
                     lock_id: black_box(acquire_response.lock_id),
                     owner: black_box("benchmark-owner".to_string()),
                 };
-                
+
                 let _ = lock_manager.release_lock(release_request).await;
             }
         })
     });
 }
 
-criterion_group!(lock_benches, bench_lock_acquire, bench_lock_release, bench_lock_acquire_and_release);
+criterion_group!(
+    lock_benches,
+    bench_lock_acquire,
+    bench_lock_release,
+    bench_lock_acquire_and_release
+);
 criterion_main!(lock_benches);

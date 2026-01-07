@@ -15,7 +15,7 @@ pub struct QueryRoot;
 #[Object]
 impl QueryRoot {
     async fn lock_status(&self, ctx: &Context<'_>, key: String) -> Result<Lock> {
-        let state = ctx.data::<ApiState>()?;
+        let _state = ctx.data::<ApiState>()?;
         Ok(Lock {
             key: key.clone(),
             owner: "system".to_string(),
@@ -128,7 +128,7 @@ impl QueryRoot {
                     is_system: role.is_system,
                 })
                 .collect()),
-            Err(_) => Ok(vec![]),
+            Err(e) => Err(async_graphql::Error::new(format!("Failed to get all roles: {}", e))),
         }
     }
 

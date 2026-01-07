@@ -8,27 +8,28 @@ use crate::auth::{Permission, Role};
 use axum::{
     extract::{Path, State},
     http::StatusCode,
-    response::Json,
+    response::{IntoResponse, Json},
 };
 use serde_json::{json, Value};
 
 pub async fn create_user(
     State(state): State<ApiState>,
     Json(payload): Json<CreateUserRequest>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let mut rbac = state.rbac_manager.lock().await;
 
     match rbac
         .create_user(payload.username, payload.email, payload.roles)
         .await
     {
-        Ok(user) => Ok(Json(json!({
+        Ok(user) => Json(json!({
             "success": true,
             "data": user
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to create user: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -36,18 +37,19 @@ pub async fn create_user(
 pub async fn get_user(
     State(state): State<ApiState>,
     Path(user_id): Path<String>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let rbac = state.rbac_manager.lock().await;
 
     match rbac.get_user(&user_id).await {
-        Ok(Some(user)) => Ok(Json(json!({
+        Ok(Some(user)) => Json(json!({
             "success": true,
             "data": user
-        }))),
-        Ok(None) => Err(StatusCode::NOT_FOUND),
+        }))
+        .into_response(),
+        Ok(None) => StatusCode::NOT_FOUND.into_response(),
         Err(e) => {
             tracing::error!("Failed to get user: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -55,18 +57,19 @@ pub async fn get_user(
 pub async fn get_user_by_username(
     State(state): State<ApiState>,
     Path(username): Path<String>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let rbac = state.rbac_manager.lock().await;
 
     match rbac.get_user_by_username(&username).await {
-        Ok(Some(user)) => Ok(Json(json!({
+        Ok(Some(user)) => Json(json!({
             "success": true,
             "data": user
-        }))),
-        Ok(None) => Err(StatusCode::NOT_FOUND),
+        }))
+        .into_response(),
+        Ok(None) => StatusCode::NOT_FOUND.into_response(),
         Err(e) => {
             tracing::error!("Failed to get user by username: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -75,17 +78,18 @@ pub async fn update_user_roles(
     State(state): State<ApiState>,
     Path(user_id): Path<String>,
     Json(payload): Json<UpdateUserRolesRequest>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let mut rbac = state.rbac_manager.lock().await;
 
     match rbac.update_user_roles(&user_id, payload.roles).await {
-        Ok(_) => Ok(Json(json!({
+        Ok(_) => Json(json!({
             "success": true,
             "message": "User roles updated successfully"
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to update user roles: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -94,17 +98,18 @@ pub async fn add_user_permission(
     State(state): State<ApiState>,
     Path(user_id): Path<String>,
     Json(payload): Json<AddPermissionRequest>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let mut rbac = state.rbac_manager.lock().await;
 
     match rbac.add_user_permission(&user_id, payload.permission).await {
-        Ok(_) => Ok(Json(json!({
+        Ok(_) => Json(json!({
             "success": true,
             "message": "Permission added successfully"
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to add user permission: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -113,20 +118,21 @@ pub async fn remove_user_permission(
     State(state): State<ApiState>,
     Path(user_id): Path<String>,
     Json(payload): Json<RemovePermissionRequest>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let mut rbac = state.rbac_manager.lock().await;
 
     match rbac
         .remove_user_permission(&user_id, payload.permission)
         .await
     {
-        Ok(_) => Ok(Json(json!({
+        Ok(_) => Json(json!({
             "success": true,
             "message": "Permission removed successfully"
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to remove user permission: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -135,17 +141,18 @@ pub async fn check_permission(
     State(state): State<ApiState>,
     Path(user_id): Path<String>,
     Json(payload): Json<CheckPermissionRequest>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let rbac = state.rbac_manager.lock().await;
 
     match rbac.check_permission(&user_id, &payload.permission).await {
-        Ok(has_permission) => Ok(Json(json!({
+        Ok(has_permission) => Json(json!({
             "success": true,
             "has_permission": has_permission
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to check permission: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -154,20 +161,21 @@ pub async fn check_resource_permission(
     State(state): State<ApiState>,
     Path((user_id, resource_id)): Path<(String, String)>,
     Json(payload): Json<CheckResourcePermissionRequest>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let rbac = state.rbac_manager.lock().await;
 
     match rbac
         .check_resource_permission(&user_id, &resource_id, &payload.permission)
         .await
     {
-        Ok(has_permission) => Ok(Json(json!({
+        Ok(has_permission) => Json(json!({
             "success": true,
             "has_permission": has_permission
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to check resource permission: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -175,50 +183,53 @@ pub async fn check_resource_permission(
 pub async fn create_custom_role(
     State(state): State<ApiState>,
     Json(payload): Json<CreateCustomRoleRequest>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let mut rbac = state.rbac_manager.lock().await;
 
     match rbac
         .create_custom_role(payload.name, payload.description, payload.permissions)
         .await
     {
-        Ok(_) => Ok(Json(json!({
+        Ok(_) => Json(json!({
             "success": true,
             "message": "Custom role created successfully"
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to create custom role: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
 
-pub async fn get_all_users(State(state): State<ApiState>) -> Result<Json<Value>, StatusCode> {
+pub async fn get_all_users(State(state): State<ApiState>) -> impl IntoResponse {
     let rbac = state.rbac_manager.lock().await;
 
     match rbac.get_all_users().await {
-        Ok(users) => Ok(Json(json!({
+        Ok(users) => Json(json!({
             "success": true,
             "data": users
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to get all users: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
 
-pub async fn get_all_roles(State(state): State<ApiState>) -> Result<Json<Value>, StatusCode> {
+pub async fn get_all_roles(State(state): State<ApiState>) -> impl IntoResponse {
     let rbac = state.rbac_manager.lock().await;
 
     match rbac.get_all_roles().await {
-        Ok(roles) => Ok(Json(json!({
+        Ok(roles) => Json(json!({
             "success": true,
             "data": roles
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to get all roles: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -226,17 +237,18 @@ pub async fn get_all_roles(State(state): State<ApiState>) -> Result<Json<Value>,
 pub async fn deactivate_user(
     State(state): State<ApiState>,
     Path(user_id): Path<String>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let mut rbac = state.rbac_manager.lock().await;
 
     match rbac.deactivate_user(&user_id).await {
-        Ok(_) => Ok(Json(json!({
+        Ok(_) => Json(json!({
             "success": true,
             "message": "User deactivated successfully"
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to deactivate user: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -244,21 +256,21 @@ pub async fn deactivate_user(
 pub async fn activate_user(
     State(state): State<ApiState>,
     Path(user_id): Path<String>,
-) -> Result<Json<Value>, StatusCode> {
+) -> impl IntoResponse {
     let mut rbac = state.rbac_manager.lock().await;
 
     match rbac.activate_user(&user_id).await {
-        Ok(_) => Ok(Json(json!({
+        Ok(_) => Json(json!({
             "success": true,
             "message": "User activated successfully"
-        }))),
+        }))
+        .into_response(),
         Err(e) => {
             tracing::error!("Failed to activate user: {}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
-
 
 /// Request structure for creating a new user.
 #[derive(serde::Deserialize)]

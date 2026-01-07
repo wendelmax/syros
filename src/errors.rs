@@ -32,4 +32,7 @@ pub enum SyrosError {
 
     #[error("Internal error: {0}")]
     InternalError(String),
+
+    #[error("Clock error: {0}")]
+    ClockError(String),
 }

@@ -37,5 +37,6 @@ pub mod errors;
 pub mod generated;
 pub mod metrics;
 pub mod server;
+pub mod storage;
 
 pub use errors::{Result, SyrosError};

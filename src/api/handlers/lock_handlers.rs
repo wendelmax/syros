@@ -5,6 +5,7 @@ use crate::core::lock_manager::{
 use axum::{
     extract::{Path, State},
     http::StatusCode,
+    response::IntoResponse,
     Json,
 };
 use serde::{Deserialize, Serialize};
@@ -24,7 +25,7 @@ pub struct ReleaseLockRequestPayload {
     pub owner: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct LockStatusResponse {
     pub key: String,
     pub lock_id: Option<String>,
@@ -38,7 +39,7 @@ pub struct LockStatusResponse {
 pub async fn acquire_lock(
     State(state): State<ApiState>,
     Json(request): Json<AcquireLockRequest>,
-) -> Result<Json<LockResponse>, StatusCode> {
+) -> impl IntoResponse {
     let lock_request = LockRequest {
         key: request.key,
         ttl: std::time::Duration::from_secs(request.ttl_seconds),
@@ -52,10 +53,10 @@ pub async fn acquire_lock(
     state.metrics.increment_locks_acquired();
 
     match state.lock_manager.acquire_lock(lock_request).await {
-        Ok(response) => Ok(Json(response)),
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error acquiring lock: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -64,7 +65,7 @@ pub async fn release_lock(
     State(state): State<ApiState>,
     Path(key): Path<String>,
     Json(request): Json<ReleaseLockRequestPayload>,
-) -> Result<Json<ReleaseLockResponse>, StatusCode> {
+) -> impl IntoResponse {
     let release_request = ReleaseLockRequest {
         key,
         lock_id: request.lock_id,
@@ -74,10 +75,10 @@ pub async fn release_lock(
     state.metrics.increment_locks_released();
 
     match state.lock_manager.release_lock(release_request).await {
-        Ok(response) => Ok(Json(response)),
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error releasing lock: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -85,9 +86,9 @@ pub async fn release_lock(
 pub async fn get_lock_status(
     State(state): State<ApiState>,
     Path(key): Path<String>,
-) -> Result<Json<LockStatusResponse>, StatusCode> {
+) -> impl IntoResponse {
     match state.lock_manager.get_lock_status(&key).await {
-        Ok(Some(lock_state)) => Ok(Json(LockStatusResponse {
+        Ok(Some(lock_state)) => Json(LockStatusResponse {
             key: lock_state.key,
             lock_id: Some(lock_state.id),
             owner: Some(lock_state.owner),
@@ -95,8 +96,9 @@ pub async fn get_lock_status(
             expires_at: Some(lock_state.expires_at.to_rfc3339()),
             metadata: lock_state.metadata,
             is_locked: true,
-        })),
-        Ok(None) => Ok(Json(LockStatusResponse {
+        })
+        .into_response(),
+        Ok(None) => Json(LockStatusResponse {
             key,
             lock_id: None,
             owner: None,
@@ -104,10 +106,11 @@ pub async fn get_lock_status(
             expires_at: None,
             metadata: None,
             is_locked: false,
-        })),
+        })
+        .into_response(),
         Err(e) => {
             eprintln!("Error getting lock status: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }

@@ -28,7 +28,7 @@ pub struct CacheRequest {
     pub tags: Vec<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CacheResponse {
     pub key: String,
     pub value: Option<serde_json::Value>,
@@ -41,7 +41,7 @@ pub struct DeleteCacheRequest {
     pub key: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeleteCacheResponse {
     pub success: bool,
     pub message: String,
@@ -52,7 +52,7 @@ pub struct InvalidateByTagRequest {
     pub tag: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct InvalidateByTagResponse {
     pub invalidated_count: u64,
     pub success: bool,

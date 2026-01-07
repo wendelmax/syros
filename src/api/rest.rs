@@ -6,7 +6,8 @@
 
 use crate::api::graphql::{graphql_handler, graphql_playground};
 use crate::api::handlers::{
-    auth_handlers, basic_handlers, health_handlers, metrics_handlers, rbac_handlers,
+    auth_handlers, cache_handlers, event_handlers, health_handlers, lock_handlers, metrics_handlers,
+    rbac_handlers, saga_handlers,
 };
 use crate::api::websocket::WebSocketService;
 use crate::auth::{AuthMiddleware, RBACManager};
@@ -47,6 +48,48 @@ pub struct ApiState {
     pub auth_middleware: AuthMiddleware,
     /// Role-based access control manager
     pub rbac_manager: Arc<tokio::sync::Mutex<RBACManager>>,
+}
+
+impl axum::extract::FromRef<ApiState> for Config {
+    fn from_ref(state: &ApiState) -> Self {
+        state.config.clone()
+    }
+}
+
+impl axum::extract::FromRef<ApiState> for LockManager {
+    fn from_ref(state: &ApiState) -> Self {
+        state.lock_manager.clone()
+    }
+}
+
+impl axum::extract::FromRef<ApiState> for SagaOrchestrator {
+    fn from_ref(state: &ApiState) -> Self {
+        state.saga_orchestrator.clone()
+    }
+}
+
+impl axum::extract::FromRef<ApiState> for EventStore {
+    fn from_ref(state: &ApiState) -> Self {
+        state.event_store.clone()
+    }
+}
+
+impl axum::extract::FromRef<ApiState> for CacheManager {
+    fn from_ref(state: &ApiState) -> Self {
+        state.cache_manager.clone()
+    }
+}
+
+impl axum::extract::FromRef<ApiState> for Arc<Metrics> {
+    fn from_ref(state: &ApiState) -> Self {
+        state.metrics.clone()
+    }
+}
+
+impl axum::extract::FromRef<ApiState> for AuthMiddleware {
+    fn from_ref(state: &ApiState) -> Self {
+        state.auth_middleware.clone()
+    }
 }
 
 /// WebSocket connection handler.
@@ -90,22 +133,22 @@ pub fn create_rest_router(state: ApiState) -> Router {
         .route("/ready", get(health_handlers::readiness_check))
         .route("/live", get(health_handlers::liveness_check))
         .route("/metrics", get(metrics_handlers::metrics_handler))
-        .route("/api/v1/locks", post(basic_handlers::acquire_lock))
-        .route("/api/v1/locks/:key", delete(basic_handlers::release_lock))
+        .route("/api/v1/locks", post(lock_handlers::acquire_lock))
+        .route("/api/v1/locks/:key", delete(lock_handlers::release_lock))
         .route(
             "/api/v1/locks/:key/status",
-            get(basic_handlers::get_lock_status),
+            get(lock_handlers::get_lock_status),
         )
-        .route("/api/v1/sagas", post(basic_handlers::start_saga))
+        .route("/api/v1/sagas", post(saga_handlers::start_saga))
         .route(
             "/api/v1/sagas/:saga_id/status",
-            get(basic_handlers::get_saga_status),
+            get(saga_handlers::get_saga_status),
         )
-        .route("/api/v1/events", post(basic_handlers::append_event))
-        .route("/api/v1/events/:stream_id", get(basic_handlers::get_events))
-        .route("/api/v1/cache/:key", post(basic_handlers::set_cache))
-        .route("/api/v1/cache/:key", get(basic_handlers::get_cache))
-        .route("/api/v1/cache/:key", delete(basic_handlers::delete_cache))
+        .route("/api/v1/events", post(event_handlers::append_event))
+        .route("/api/v1/events/:stream_id", get(event_handlers::get_events))
+        .route("/api/v1/cache/:key", post(cache_handlers::set_cache))
+        .route("/api/v1/cache/:key", get(cache_handlers::get_cache))
+        .route("/api/v1/cache/:key", delete(cache_handlers::delete_cache))
         .route("/api/v1/auth/login", post(auth_handlers::login))
         .route("/api/v1/auth/token", post(auth_handlers::create_token))
         .route("/api/v1/auth/api-keys", post(auth_handlers::create_api_key))

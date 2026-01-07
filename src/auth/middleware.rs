@@ -74,7 +74,6 @@ impl AuthMiddleware {
         next: Next,
         required_role: &str,
     ) -> Result<Response, StatusCode> {
- and role
         if let Some(auth_header) = headers.get("authorization") {
             if let Ok(auth_str) = auth_header.to_str() {
                 if let Some(token) = JwtAuth::extract_token_from_header(auth_str) {

@@ -10,17 +10,18 @@ use std::time::Duration;
 use tokio::time::sleep;
 use uuid::Uuid;
 
-use syros_platform::{
+use syros::{
     auth::{Permission, RBACManager, Resource, ResourceType, Role, User},
     core::{
         cache_manager::{CacheManager, CacheRequest, DeleteCacheRequest},
         event_store::{EventRequest, EventStore, GetEventsRequest},
         lock_manager::{LockManager, LockRequest, ReleaseLockRequest},
         saga_orchestrator::{
-            BackoffStrategy, RetryPolicy, SagaOrchestrator, SagaRequest, SagaStep,
+            BackoffStrategy, RetryPolicy, SagaOrchestrator, SagaRequest, SagaResponse, SagaStep,
         },
     },
     metrics::Metrics,
+    storage::{postgres::PostgresManager, redis::RedisManager},
 };
 
 mod mock_server;
@@ -29,7 +30,8 @@ use mock_server::{with_mock_server, MockServer, MockServerConfig};
 /// Test the core lock manager functionality
 #[tokio::test]
 async fn test_lock_manager_integration() {
-    let lock_manager = LockManager::new();
+    let redis_manager = RedisManager::new("redis://localhost:6379");
+    let lock_manager = LockManager::new(redis_manager);
 
     let key = format!("test_lock_{}", Uuid::new_v4());
     let owner = "test_owner";
@@ -90,7 +92,8 @@ async fn test_lock_manager_integration() {
 /// Test the saga orchestrator functionality
 #[tokio::test]
 async fn test_saga_orchestrator_integration() {
-    let orchestrator = SagaOrchestrator::new();
+    let postgres_manager = PostgresManager::new("postgres://localhost:5432/syros", 10).await.unwrap();
+    let orchestrator = SagaOrchestrator::new(postgres_manager);
 
     let saga_name = format!("test_saga_{}", Uuid::new_v4());
     let steps = vec![
@@ -126,7 +129,7 @@ async fn test_saga_orchestrator_integration() {
     };
 
     // Start saga
-    let response = orchestrator
+    let response: SagaResponse = orchestrator
         .start_saga(saga_request)
         .await
         .expect("Failed to start saga");
@@ -152,7 +155,8 @@ async fn test_saga_orchestrator_integration() {
 /// Test the event store functionality
 #[tokio::test]
 async fn test_event_store_integration() {
-    let event_store = EventStore::new();
+    let postgres_manager = PostgresManager::new("postgres://localhost:5432/syros", 10).await.unwrap();
+    let event_store = EventStore::new(postgres_manager);
 
     let stream_id = format!("test_stream_{}", Uuid::new_v4());
     let event_type = "test.event";
@@ -201,7 +205,8 @@ async fn test_event_store_integration() {
 /// Test the cache manager functionality
 #[tokio::test]
 async fn test_cache_manager_integration() {
-    let cache_manager = CacheManager::new();
+    let redis_manager = RedisManager::new("redis://localhost:6379");
+    let cache_manager = CacheManager::new(redis_manager);
 
     let key = format!("test_key_{}", Uuid::new_v4());
     let value = json!({"cached": "data", "number": 42});
@@ -248,7 +253,8 @@ async fn test_cache_manager_integration() {
 /// Test concurrent lock acquisition
 #[tokio::test]
 async fn test_concurrent_lock_acquisition() {
-    let lock_manager = LockManager::new();
+    let redis_manager = RedisManager::new("redis://localhost:6379");
+    let lock_manager = LockManager::new(redis_manager);
 
     let key = format!("concurrent_test_{}", Uuid::new_v4());
     let ttl = Duration::from_secs(5);
@@ -284,7 +290,9 @@ async fn test_concurrent_lock_acquisition() {
     // Count successful acquisitions
     let successful_acquisitions: Vec<_> = results
         .into_iter()
-        .filter_map(|result| result.ok().and_then(|r| r.ok()))
+        .filter_map(|result| {
+            result.ok().and_then(|r: Result<(String, String), syros::SyrosError>| r.ok())
+        })
         .collect();
 
     // Only one should succeed initially, others should wait and then succeed
@@ -294,7 +302,8 @@ async fn test_concurrent_lock_acquisition() {
 /// Test saga compensation
 #[tokio::test]
 async fn test_saga_compensation() {
-    let orchestrator = SagaOrchestrator::new();
+    let postgres_manager = PostgresManager::new("postgres://localhost:5432/syros", 10).await.unwrap();
+    let orchestrator = SagaOrchestrator::new(postgres_manager);
 
     let saga_name = format!("compensation_test_{}", Uuid::new_v4());
     let steps = vec![
@@ -330,7 +339,7 @@ async fn test_saga_compensation() {
     };
 
     // Start saga
-    let response = orchestrator
+    let response: SagaResponse = orchestrator
         .start_saga(saga_request)
         .await
         .expect("Failed to start saga");
@@ -350,8 +359,8 @@ async fn test_saga_compensation() {
     // The saga should either be completed or compensated
     assert!(matches!(
         saga.status,
-        syros_platform::core::saga_orchestrator::SagaStatus::Completed
-            | syros_platform::core::saga_orchestrator::SagaStatus::Compensated
+        syros::core::saga_orchestrator::SagaStatus::Completed
+            | syros::core::saga_orchestrator::SagaStatus::Compensated
     ));
 }
 
@@ -562,9 +571,11 @@ async fn test_graphql_integration() {
 #[tokio::test]
 async fn test_complete_workflow_integration() {
     // Initialize all components
-    let lock_manager = LockManager::new();
-    let saga_orchestrator = SagaOrchestrator::new();
-    let event_store = EventStore::new();
+    let redis_manager = RedisManager::new("redis://localhost:6379");
+    let postgres_manager = PostgresManager::new("postgres://localhost:5432/syros", 10).await.unwrap();
+    let lock_manager = LockManager::new(redis_manager.clone());
+    let saga_orchestrator = SagaOrchestrator::new(postgres_manager.clone());
+    let event_store = EventStore::new(postgres_manager.clone());
     let cache_manager = CacheManager::new();
     let mut rbac_manager = RBACManager::new();
 

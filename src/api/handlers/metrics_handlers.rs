@@ -4,7 +4,7 @@
 //! including Prometheus metrics collection and health checks.
 
 use crate::api::rest::ApiState;
-use axum::{http::StatusCode, response::Response};
+use axum::{http::StatusCode, response::{IntoResponse, Response}};
 
 /// Handles metrics collection requests.
 ///
@@ -20,17 +20,19 @@ use axum::{http::StatusCode, response::Response};
 /// Returns a response with Prometheus metrics data or an error status.
 pub async fn metrics_handler(
     axum::extract::State(state): axum::extract::State<ApiState>,
-) -> Result<Response<String>, StatusCode> {
+) -> impl IntoResponse {
     match state.metrics.get_metrics() {
         Ok(metrics_data) => {
             let response = Response::builder()
-                .status(200)
-                .header("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
+                .status(StatusCode::OK)
+                .header("Content-Type", "text/plain; version=0.0.4")
                 .body(metrics_data)
-                .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-
-            Ok(response)
+                .unwrap();
+            response.into_response()
         }
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(e) => {
+            eprintln!("Error collecting metrics: {:?}", e);
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }

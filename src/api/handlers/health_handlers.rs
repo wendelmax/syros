@@ -1,4 +1,4 @@
-use axum::{http::StatusCode, Json};
+use axum::{http::StatusCode, response::IntoResponse, Json};
 use serde::Serialize;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -23,19 +23,20 @@ pub struct CheckResult {
     pub message: String,
 }
 
-pub async fn health_check() -> Result<Json<HealthResponse>, StatusCode> {
+pub async fn health_check() -> impl IntoResponse {
     let now = SystemTime::now();
     let uptime = now.duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
 
-    Ok(Json(HealthResponse {
+    Json(HealthResponse {
         status: "healthy".to_string(),
         timestamp: chrono::Utc::now().to_rfc3339(),
         uptime_seconds: uptime,
         version: env!("CARGO_PKG_VERSION").to_string(),
-    }))
+    })
+    .into_response()
 }
 
-pub async fn readiness_check() -> Result<Json<ReadinessResponse>, StatusCode> {
+pub async fn readiness_check() -> impl IntoResponse {
     let mut checks = Vec::new();
 
     checks.push(CheckResult {
@@ -64,12 +65,13 @@ pub async fn readiness_check() -> Result<Json<ReadinessResponse>, StatusCode> {
 
     let all_ready = checks.iter().all(|check| check.status == "ready");
 
-    Ok(Json(ReadinessResponse {
+    Json(ReadinessResponse {
         ready: all_ready,
         checks,
-    }))
+    })
+    .into_response()
 }
 
-pub async fn liveness_check() -> Result<Json<HealthResponse>, StatusCode> {
+pub async fn liveness_check() -> impl IntoResponse {
     health_check().await
 }

@@ -9,6 +9,7 @@ use crate::core::event_store::{
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
+    response::IntoResponse,
     Json,
 };
 use serde::{Deserialize, Serialize};
@@ -28,13 +29,13 @@ pub struct AppendEventRequest {
 #[derive(Debug, Deserialize)]
 pub struct GetEventsQuery {
     /// Start from this version (optional)
-    pub from_version: Option<u64>,
+    pub from_version: Option<i64>,
     /// Maximum number of events to return (optional)
-    pub limit: Option<u64>,
+    pub limit: Option<i64>,
 }
 
 /// Response structure for event data.
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct EventResponseData {
     /// Unique identifier of the event
     pub id: String,
@@ -49,7 +50,7 @@ pub struct EventResponseData {
     /// Timestamp when the event was created
     pub timestamp: String,
     /// Version number of the event in the stream
-    pub version: u64,
+    pub version: i64,
 }
 
 /// Appends an event to the specified stream.
@@ -70,7 +71,7 @@ pub async fn append_event(
     State(event_store): State<EventStore>,
     Path(stream_id): Path<String>,
     Json(request): Json<AppendEventRequest>,
-) -> Result<Json<EventResponse>, StatusCode> {
+) -> impl IntoResponse {
     let event_request = EventRequest {
         stream_id,
         event_type: request.event_type,
@@ -79,10 +80,10 @@ pub async fn append_event(
     };
 
     match event_store.append_event(event_request).await {
-        Ok(response) => Ok(Json(response)),
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error appending event: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
@@ -105,7 +106,7 @@ pub async fn get_events(
     State(event_store): State<EventStore>,
     Path(stream_id): Path<String>,
     Query(params): Query<GetEventsQuery>,
-) -> Result<Json<GetEventsResponse>, StatusCode> {
+) -> impl IntoResponse {
     let get_events_request = GetEventsRequest {
         stream_id,
         from_version: params.from_version,
@@ -113,44 +114,10 @@ pub async fn get_events(
     };
 
     match event_store.get_events(get_events_request).await {
-        Ok(response) => {
-            let events_data: Vec<EventResponseData> = response
-                .events
-                .into_iter()
-                .map(|event| EventResponseData {
-                    id: event.id,
-                    stream_id: event.stream_id,
-                    event_type: event.event_type,
-                    data: event.data,
-                    metadata: event.metadata,
-                    timestamp: event.timestamp.to_rfc3339(),
-                    version: event.version,
-                })
-                .collect();
-
-            Ok(Json(GetEventsResponse {
-                stream_id: response.stream_id,
-                events: events_data
-                    .into_iter()
-                    .map(|e| crate::core::event_store::Event {
-                        id: e.id,
-                        stream_id: e.stream_id,
-                        event_type: e.event_type,
-                        data: e.data,
-                        metadata: e.metadata,
-                        timestamp: chrono::DateTime::parse_from_rfc3339(&e.timestamp)
-                            .unwrap()
-                            .with_timezone(&chrono::Utc),
-                        version: e.version,
-                    })
-                    .collect(),
-                success: response.success,
-                message: response.message,
-            }))
-        }
+        Ok(response) => Json(response).into_response(),
         Err(e) => {
             eprintln!("Error getting events: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
